@@ -11,8 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "arweave": "^1.14.4",
-    "jszip": "^3.10.1"
+    "archiver": "^6.0.0",
+    "arweave": "^1.14.4"
   },
   "devDependencies": {
     "@types/node": "^20.5.6"

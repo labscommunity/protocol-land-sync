@@ -1,37 +1,46 @@
 const fs = require('fs');
+const archiver = require('archiver');
 const path = require('path');
-const JSZip = require('jszip');
 
 const PATH = '.';
 const DOTGIT_PATH = '.git';
 const FILENAME = 'repo.zip';
 
 async function zipRepo() {
-    const zip = new JSZip();
-    const filesToInclude = [];
+    return new Promise((resolve, reject) => {
+        const archive = archiver('zip', { zlib: { level: 9 } });
 
-    const walk = (currentPath) => {
-        const items = fs.readdirSync(currentPath);
+        const output = fs.createWriteStream(FILENAME);
 
-        for (const item of items) {
-            const itemPath = path.join(currentPath, item);
-            if (fs.statSync(itemPath).isDirectory()) walk(itemPath);
-            else filesToInclude.push(itemPath);
-        }
-    };
+        output.on('close', () => {
+            console.log('Repository zipped successfully');
+            resolve();
+        });
 
-    walk(DOTGIT_PATH);
+        archive.on('error', (error) => {
+            console.error('Error zipping repository:', error);
+            reject(error);
+        });
 
-    for (const file of filesToInclude) {
-        const content = fs.readFileSync(file);
-        const relativePath = path.relative(PATH, file);
-        zip.file(relativePath, content);
-    }
+        archive.pipe(output);
 
-    const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
-    fs.writeFileSync(FILENAME, zipBuffer);
+        const walk = (currentPath) => {
+            const items = fs.readdirSync(currentPath);
 
-    console.log('Repository zipped successfully');
+            for (const item of items) {
+                const itemPath = path.join(currentPath, item);
+                if (fs.statSync(itemPath).isDirectory()) walk(itemPath);
+                else
+                    archive.file(itemPath, {
+                        name: path.relative(PATH, itemPath),
+                    });
+            }
+        };
+
+        walk(DOTGIT_PATH);
+
+        archive.finalize();
+    });
 }
 
 (async () => {
