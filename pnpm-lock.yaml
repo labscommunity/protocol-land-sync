@@ -14,6 +14,9 @@ dependencies:
   arweave:
     specifier: ^1.14.4
     version: 1.14.4
+  dotenv:
+    specifier: ^16.3.1
+    version: 16.3.1
 
 devDependencies:
   '@types/node':
@@ -1241,6 +1244,11 @@ packages:
   /depd@2.0.0:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
     engines: {node: '>= 0.8'}
+    dev: false
+
+  /dotenv@16.3.1:
+    resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
+    engines: {node: '>=12'}
     dev: false
 
   /elliptic@6.5.4:
