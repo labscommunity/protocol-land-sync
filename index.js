@@ -1,6 +1,6 @@
-const fs = require('fs');
-const archiver = require('archiver');
-const path = require('path');
+import fs from 'fs';
+import archiver from 'archiver';
+import path from 'path';
 
 const PATH = '.';
 const DOTGIT_PATH = '.git';
@@ -10,19 +10,22 @@ async function zipRepo() {
     return new Promise((resolve, reject) => {
         const archive = archiver('zip', { zlib: { level: 9 } });
 
-        const output = fs.createWriteStream(FILENAME);
+        const chunks = [];
 
-        output.on('close', () => {
+        archive.on('data', (chunk) => {
+            chunks.push(chunk);
+        });
+
+        archive.on('end', () => {
+            const zipBuffer = Buffer.concat(chunks);
             console.log('Repository zipped successfully');
-            resolve();
+            resolve(zipBuffer);
         });
 
         archive.on('error', (error) => {
             console.error('Error zipping repository:', error);
             reject(error);
         });
-
-        archive.pipe(output);
 
         const walk = (currentPath) => {
             const items = fs.readdirSync(currentPath);
@@ -44,8 +47,12 @@ async function zipRepo() {
 }
 
 (async () => {
-    await zipRepo().catch((error) => {
+    try {
+        const zipBuffer = await zipRepo();
+        fs.writeFileSync(FILENAME, zipBuffer);
+        console.log('Zip buffer written to repo.zip');
+    } catch (error) {
         console.error('Error zipping repository:', error);
         process.exit(1);
-    });
+    }
 })();
