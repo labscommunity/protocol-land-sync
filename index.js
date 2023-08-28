@@ -17,7 +17,9 @@ async function main() {
     console.log(`[ PL Sync ] Starting sync for repo '${pkgInfo.name}'`);
     // define what to compress (only .git folder)
     const PATH = '.';
-    const FOLDER_TO_ZIP = '.git';
+    // const FOLDER_TO_ZIP = '.git'; // Only compress `.git` folder
+    const FOLDER_TO_ZIP = '.'; // Compress the full repo
+    const HAS_GITIGNORE = true; // Use `.gitignore` to avoid compressing secrets
     const owner = await getAddress(JWK);
 
     // get existing repos for this wallet
@@ -29,7 +31,7 @@ async function main() {
     // compress the repo
     let zipBuffer;
     try {
-        zipBuffer = await zipRepo(PATH, FOLDER_TO_ZIP);
+        zipBuffer = await zipRepo(PATH, FOLDER_TO_ZIP, HAS_GITIGNORE);
     } catch (error) {
         console.error('Error zipping repository:', error);
         process.exit(1);
