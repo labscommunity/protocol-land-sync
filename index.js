@@ -1,7 +1,6 @@
 import { zipRepo } from './lib/zipHelper.mjs';
-import { bundlrUpload } from './lib/bundlrHelper.mjs';
-import { arweaveUpload, getAddress } from './lib/arweaveHelper.mjs';
-import { getRepos, newRepo, updateRepo } from './lib/warpHelper.mjs';
+import { getAddress, uploadRepo } from './lib/arweaveHelper.mjs';
+import { getRepos, postRepoToWarp } from './lib/warpHelper.mjs';
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
@@ -9,6 +8,7 @@ const pkgInfo = require('./package.json');
 
 // get wallet from secrets
 import { config } from 'dotenv';
+import { getTags } from './lib/common.mjs';
 config();
 const JWK = JSON.parse(process.env.WALLET);
 const CONTRACT_TX_ID = process.env.CONTRACT_TX_ID;
@@ -18,6 +18,13 @@ async function main() {
     // define what to compress (only .git folder)
     const PATH = '.';
     const FOLDER_TO_ZIP = '.git';
+    const owner = await getAddress(JWK);
+
+    // get existing repos for this wallet
+    const repos = await getRepos(JWK, CONTRACT_TX_ID);
+
+    // check if repo already exists
+    let repoInfo = repos.find((r) => r.name === pkgInfo.name);
 
     // compress the repo
     let zipBuffer;
@@ -28,53 +35,12 @@ async function main() {
         process.exit(1);
     }
 
-    let txId;
+    const tags = getTags(owner, pkgInfo.name, pkgInfo.description, repoInfo);
 
-    // upload compressed repo to arweave using bundlr
-    // try {
-    //     const bundlrTxId = await bundlrUpload(JWK, zipBuffer);
-    //     txId = bundlrTxId;
-    //     console.log('Posted Tx to Bundlr: ', bundlrTxId);
-    // } catch (error) {
-    //     console.error('Error uploading zipped repo with bundlr:', error);
-    //     console.error('Trying with Arweave...');
-    //     try {
-    //         // bundlr failes -> try arweave instead
-    //         const arweaveTxId = await arweaveUpload(JWK, zipBuffer);
-    //         txId = arweaveTxId;
-    //         console.log('Posted Tx to Arweave: ', arweaveTxId);
-    //     } catch (error) {
-    //         console.error('Error uploading zipped repo with arweave:', error);
-    //         process.exit(1);
-    //     }
-    // }
+    const txId = await uploadRepo(JWK, zipBuffer, tags);
 
-    txId = 'hey';
-    if (txId) {
-        // get existing repos for this wallet
-        const repos = await getRepos(JWK, CONTRACT_TX_ID);
-
-        // check if repo already exists
-        let repoInfo = repos.find((r) => r.name === pkgInfo.name);
-        let owner = await getAddress(JWK);
-
-        if (!repoInfo) {
-            newRepo({
-                title: pkgInfo.name,
-                description: pkgInfo.description,
-                dataTxId: txId,
-                owner,
-            });
-        } else {
-            updateRepo({
-                id: repoInfo.id,
-                title: pkgInfo.name,
-                description: pkgInfo.description,
-                dataTxId: txId,
-                owner,
-            });
-        }
-    }
+    if (txId)
+        postRepoToWarp(JWK, CONTRACT_TX_ID, repoInfo, pkgInfo, txId, owner);
 }
 
 // Run the main function
