@@ -1,4 +1,4 @@
-import { writeBufferToFile, zipRepo, zipRepoJsZip } from './lib/zipHelper.mjs';
+import { zipRepoJsZip } from './lib/zipHelper.mjs';
 import { getAddress, uploadRepo } from './lib/arweaveHelper.mjs';
 import { getRepos, postRepoToWarp } from './lib/warpHelper.mjs';
 
@@ -40,7 +40,6 @@ async function main() {
             FOLDER_TO_ZIP,
             HAS_GITIGNORE
         );
-        // writeBufferToFile(zipBuffer, 'repo.zip');
     } catch (error) {
         console.error('Error zipping repository:', error);
         process.exit(1);
