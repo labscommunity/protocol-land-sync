@@ -31,7 +31,12 @@ async function main() {
     // compress the repo
     let zipBuffer;
     try {
-        zipBuffer = await zipRepo(PATH, FOLDER_TO_ZIP, HAS_GITIGNORE);
+        zipBuffer = await zipRepo(
+            pkgInfo.name,
+            PATH,
+            FOLDER_TO_ZIP,
+            HAS_GITIGNORE
+        );
     } catch (error) {
         console.error('Error zipping repository:', error);
         process.exit(1);
