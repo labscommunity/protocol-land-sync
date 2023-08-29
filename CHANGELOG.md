@@ -1,5 +1,11 @@
 # @7i7o/pl-sync
 
+## 0.0.4
+
+### Patch Changes
+
+-   880c70d: Make package executable with npx
+
 ## 0.0.3
 
 ### Patch Changes
