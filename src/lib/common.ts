@@ -2,30 +2,46 @@ import fs from 'fs';
 import path from 'path';
 import util from 'util';
 
-export function getTags(owner, title, description, existingRepoInfo) {
+// get info from secrets
+import { config } from 'dotenv';
+import { getAddress } from './arweaveHelper';
+import { Tag } from 'arweave/node/lib/transaction';
+config();
+const JWK = JSON.parse(process.env.WALLET as string);
+const CONTRACT_TX_ID = process.env.CONTRACT_TX_ID as string;
+const TITLE = process.env.TITLE as string;
+const DESCRIPTION = process.env.DESCRIPTION as string;
+
+export const getWallet = () => JWK;
+
+export const getWarpContractTxId = () => CONTRACT_TX_ID;
+
+export const getTitle = () => TITLE;
+
+export const getDescription = () => DESCRIPTION;
+
+export function getTags(createNewRepo: boolean) {
     return [
         { name: 'App-Name', value: 'Protocol.Land' },
         { name: 'Content-Type', value: 'application/zip' },
-        { name: 'Creator', value: owner },
-        { name: 'Title', value: title },
-        { name: 'Description', value: description },
+        { name: 'Creator', value: getAddress() },
+        { name: 'Title', value: getTitle() },
+        { name: 'Description', value: getDescription() },
         {
             name: 'Type',
-            value:
-                !existingRepoInfo || !existingRepoInfo.id
-                    ? 'repo-create'
-                    : 'repo-update',
+            value: createNewRepo ? 'repo-create' : 'repo-update',
         },
-    ];
+    ] as Tag[];
 }
 
+/* Function to remove warp cache folder before running */
 export async function removeCacheFolder() {
     const readdir = util.promisify(fs.readdir);
     const rmdir = util.promisify(fs.rmdir);
     const unlink = util.promisify(fs.unlink);
     const stat = util.promisify(fs.stat);
 
-    async function removeFolderAndContents(folderPath) {
+    async function removeFolderAndContents(folderPath: string) {
         try {
             const entries = await readdir(folderPath);
 

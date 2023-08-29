@@ -1,27 +1,26 @@
 import Arweave from 'arweave';
 import Bundlr from '@bundlr-network/client';
+import { getWallet } from './common';
+import { Tag } from 'arweave/node/lib/transaction';
 
-export async function getAddress(jwk) {
-    return await initArweave().wallets.jwkToAddress(jwk);
+const jwk = getWallet();
+
+export async function getAddress() {
+    return await initArweave().wallets.jwkToAddress(getWallet());
 }
 
-export async function uploadRepo(jwk, zipBuffer, tags) {
+export async function uploadRepo(zipBuffer: Buffer, tags: Tag[]) {
     try {
         // upload compressed repo using bundlr
-        const bundlrTxId = await bundlrUpload(jwk, zipBuffer, tags);
+        const bundlrTxId = await bundlrUpload(zipBuffer, tags);
         console.log('Posted Tx to Bundlr: ', bundlrTxId);
         return bundlrTxId;
     } catch (error) {
-        console.log('Error uploading zipped repo with bundlr:', error);
-        console.log('Trying with Arweave...');
-        try {
-            // bundlr failed -> try arweave instead
-            const arweaveTxId = await arweaveUpload(jwk, zipBuffer, tags);
-            console.log('Posted Tx to Arweave: ', arweaveTxId);
-            return arweaveTxId;
-        } catch (error) {
-            throw ('[ plSync ] Upload to arweave failed: ', error);
-        }
+        console.log('Error uploading using bundlr, trying with Arweave...');
+        // let Arweave throw if it encounters errors
+        const arweaveTxId = await arweaveUpload(zipBuffer, tags);
+        console.log('Posted Tx to Arweave: ', arweaveTxId);
+        return arweaveTxId;
     }
 }
 
@@ -33,7 +32,7 @@ function initArweave() {
     });
 }
 
-async function arweaveUpload(jwk, zipBuffer, tags) {
+async function arweaveUpload(zipBuffer: Buffer, tags: Tag[]) {
     if (!jwk) throw '[ arweave ] No jwk wallet supplied';
 
     const arweave = initArweave();
@@ -50,7 +49,11 @@ async function arweaveUpload(jwk, zipBuffer, tags) {
     return tx.id;
 }
 
-async function bundlrUpload(jwk, zipBuffer, tags, tryFunding) {
+async function bundlrUpload(
+    zipBuffer: Buffer,
+    tags: Tag[],
+    tryFunding?: boolean
+) {
     if (!jwk) throw '[ bundlr ] No jwk wallet supplied';
 
     const bundlr = new Bundlr('http://node1.bundlr.network', 'arweave', jwk);
@@ -68,24 +71,18 @@ async function bundlrUpload(jwk, zipBuffer, tags, tryFunding) {
         console.log(`[ bundlr ] price to store ${dataSize} bytes: ${price}`);
 
         if (price > atomicBalance) {
-            try {
-                const response = await bundlr.fund(price - atomicBalance);
-                console.log(
-                    `[ bundlr ] Successfully funded! txID: ${response.id} - amount funded: ${response.quantity}`
-                );
-            } catch (e) {
-                throw ('[ bundlr ] Error funding node ', e);
-            }
+            // let bundlr throw error if it cannot fund
+            const response = await bundlr.fund(price.minus(atomicBalance));
+            console.log(
+                `[ bundlr ] Successfully funded! txID: ${response.id} - amount funded: ${response.quantity}`
+            );
         }
     }
 
-    try {
-        const response = await bundlr.upload(zipBuffer, tags);
-        console.log(
-            `[ bundlr ] Data uploaded -> https://arweave.net/${response.id}`
-        );
-        return response.id;
-    } catch (e) {
-        throw ('[ bundlr ] Error uploading file ', e);
-    }
+    // let bundlr throw error if it cannot fund
+    const response = await bundlr.upload(zipBuffer, { tags });
+    console.log(
+        `[ bundlr ] Data uploaded -> https://arweave.net/${response.id}`
+    );
+    return response.id;
 }

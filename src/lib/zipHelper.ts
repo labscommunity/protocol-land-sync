@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import JSZip from 'jszip';
 
-export function writeBufferToFile(buffer, filename) {
+export function writeBufferToFile(buffer: Buffer, filename: string) {
     try {
         fs.writeFileSync(filename, buffer);
         console.log(`File "${filename}" written successfully.`);
@@ -11,7 +11,7 @@ export function writeBufferToFile(buffer, filename) {
     }
 }
 
-function loadIgnoreList(rootPath) {
+function loadIgnoreList(rootPath: string) {
     const gitignorePath = path.join(rootPath, '.gitignore');
     if (fs.existsSync(gitignorePath)) {
         const gitignoreContent = fs.readFileSync(gitignorePath, 'utf-8');
@@ -23,16 +23,21 @@ function loadIgnoreList(rootPath) {
     return [];
 }
 
-export async function zipRepoJsZip(mainPath, zipRoot, zipFolder, hasGitignore) {
-    if (!zipFolder) zipFolder = zipRoot;
+export async function zipRepoJsZip(
+    mainPath: string,
+    zipRoot: string,
+    folderToZip?: string,
+    useGitignore?: boolean
+) {
+    if (!folderToZip) folderToZip = zipRoot;
 
-    const ignoreSet = new Set(hasGitignore ? loadIgnoreList(zipRoot) : []);
+    const ignoreSet = new Set(useGitignore ? loadIgnoreList(zipRoot) : []);
 
     const zip = new JSZip();
 
-    const filesToInclude = [];
+    const filesToInclude: string[] = [];
 
-    const walk = (currentPath) => {
+    const walk = (currentPath: string) => {
         const items = fs.readdirSync(currentPath);
 
         for (const item of items) {
@@ -49,7 +54,7 @@ export async function zipRepoJsZip(mainPath, zipRoot, zipFolder, hasGitignore) {
             }
         }
     };
-    walk(zipFolder);
+    walk(folderToZip);
 
     for (const file of filesToInclude) {
         const content = fs.readFileSync(file);
