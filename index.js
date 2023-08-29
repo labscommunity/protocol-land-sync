@@ -11,11 +11,19 @@ const CONTRACT_TX_ID = process.env.CONTRACT_TX_ID;
 const TITLE = process.env.TITLE;
 const DESCRIPTION = process.env.DESCRIPTION;
 
-async function main() {
-    // delete warp cache folder
-    await removeCacheFolder();
+const NAME_REGEX = /^[a-zA-Z0-9._-]+$/;
 
+async function main() {
     const pkgInfo = { name: TITLE, description: DESCRIPTION };
+
+    // check name complies with name rules
+    if (!NAME_REGEX.test(TITLE)) {
+        console.error(
+            `[ PL Sync ] Repo name can ONLY contain ASCII letters, digits and the characters '.', '-', and '_'`
+        );
+        process.exit(1);
+    }
+
     console.log(`[ PL Sync ] Starting sync for repo '${pkgInfo.name}'`);
 
     // define what to compress (only .git folder)
@@ -25,11 +33,16 @@ async function main() {
     const HAS_GITIGNORE = true; // Use `.gitignore` to avoid compressing secrets
     const owner = await getAddress(JWK);
 
+    // delete warp cache folder
+    await removeCacheFolder();
+
     // get existing repos for this wallet
     const repos = await getRepos(JWK, CONTRACT_TX_ID);
 
     // check if repo already exists
-    let repoInfo = repos.find((r) => r.name === pkgInfo.name);
+    let repoInfo = repos.find(
+        (r) => r.name.toLowerCase() === pkgInfo.name.toLowerCase()
+    );
 
     // compress the repo
     let zipBuffer;
