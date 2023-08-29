@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { zipRepoJsZip } from './lib/zipHelper';
 import { uploadRepo } from './lib/arweaveHelper';
 import { getRepos, postRepoToWarp } from './lib/warpHelper';
