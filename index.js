@@ -8,17 +8,20 @@ const pkgInfo = require('./package.json');
 
 // get wallet from secrets
 import { config } from 'dotenv';
-import { getTags } from './lib/common.mjs';
+import { getTags, removeCacheFolder } from './lib/common.mjs';
 config();
 const JWK = JSON.parse(process.env.WALLET);
 const CONTRACT_TX_ID = process.env.CONTRACT_TX_ID;
 
 async function main() {
+    // delete warp cache folder
+    await removeCacheFolder();
+
     console.log(`[ PL Sync ] Starting sync for repo '${pkgInfo.name}'`);
     // define what to compress (only .git folder)
     const PATH = '.';
-    // const FOLDER_TO_ZIP = '.git'; // Only compress `.git` folder
-    const FOLDER_TO_ZIP = '.'; // Compress the full repo
+    const FOLDER_TO_ZIP = '.git'; // Only compress `.git` folder
+    // const FOLDER_TO_ZIP = '.'; // Compress the full repo
     const HAS_GITIGNORE = true; // Use `.gitignore` to avoid compressing secrets
     const owner = await getAddress(JWK);
 
