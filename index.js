@@ -2,21 +2,19 @@ import { zipRepo } from './lib/zipHelper.mjs';
 import { getAddress, uploadRepo } from './lib/arweaveHelper.mjs';
 import { getRepos, postRepoToWarp } from './lib/warpHelper.mjs';
 
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const pkgInfo = require('./package.json');
-
 // get wallet from secrets
 import { config } from 'dotenv';
 import { getTags, removeCacheFolder } from './lib/common.mjs';
 config();
 const JWK = JSON.parse(process.env.WALLET);
 const CONTRACT_TX_ID = process.env.CONTRACT_TX_ID;
+const TITLE = process.env.TITLE;
+const DESCRIPTION = process.env.DESCRIPTION;
 
 async function main() {
     // delete warp cache folder
     await removeCacheFolder();
-
+    const pkgInfo = { name: TITLE, description: DESCRIPTION };
     console.log(`[ PL Sync ] Starting sync for repo '${pkgInfo.name}'`);
     // define what to compress (only .git folder)
     const PATH = '.';
