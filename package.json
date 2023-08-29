@@ -26,6 +26,11 @@
         "package.json",
         "README.md"
     ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/7i7o/pl-sync.git"
+    },
+    "homepage": "https://github.com/7i7o/pl-sync#readme",
     "dependencies": {
         "@bundlr-network/client": "^0.11.13",
         "arweave": "^1.14.4",
