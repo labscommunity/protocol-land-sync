@@ -17,7 +17,7 @@ export const getWarpContractTxId = () =>
 export const getTitle = () => process.env.REPO_TITLE as string;
 
 export const getDescription = () =>
-    process.env.REPO_DESCRIPTION ? process.env.DESCRIPTION : '';
+    process.env.REPO_DESCRIPTION ? process.env.REPO_DESCRIPTION : '';
 
 export function getTags(createNewRepo: boolean) {
     return [
