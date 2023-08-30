@@ -6,19 +6,18 @@ import util from 'util';
 import { config } from 'dotenv';
 import { getAddress } from './arweaveHelper';
 import { Tag } from 'arweave/node/lib/transaction';
+
 config();
-const JWK = JSON.parse(process.env.WALLET as string);
-const CONTRACT_TX_ID = process.env.CONTRACT_TX_ID as string;
-const TITLE = process.env.TITLE as string;
-const DESCRIPTION = process.env.DESCRIPTION as string;
 
-export const getWallet = () => JWK;
+export const getWallet = () => JSON.parse(process.env.WALLET as string);
 
-export const getWarpContractTxId = () => CONTRACT_TX_ID;
+export const getWarpContractTxId = () =>
+    'w5ZU15Y2cLzZlu3jewauIlnzbKw-OAxbN9G5TbuuiDQ';
 
-export const getTitle = () => TITLE;
+export const getTitle = () => process.env.REPO_TITLE as string;
 
-export const getDescription = () => DESCRIPTION;
+export const getDescription = () =>
+    process.env.REPO_DESCRIPTION ? process.env.DESCRIPTION : '';
 
 export function getTags(createNewRepo: boolean) {
     return [
