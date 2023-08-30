@@ -5,6 +5,7 @@ import {
     getTitle,
     getWallet,
     getWarpContractTxId,
+    waitFor,
 } from './common';
 import { getAddress } from './arweaveHelper';
 
@@ -14,10 +15,10 @@ const title = getTitle();
 const description = getDescription();
 
 const getWarp = () => WarpFactory.forMainnet();
+const contract = getWarp().contract(contractTxId).connect(jwk);
 
 export async function getRepos() {
     const address = await getAddress();
-    const contract = getWarp().contract(contractTxId).connect(jwk);
 
     // let warp throw error if it can't retrieve the repositories
     const response = await contract.viewState({
@@ -43,11 +44,13 @@ export function postRepoToWarp(
 async function newRepo(dataTxId: string) {
     if (!title || !dataTxId) throw '[ warp ] No title or dataTx for new repo';
 
-    const contract = getWarp().contract(contractTxId).connect(jwk);
+    // const contract = getWarp().contract(contractTxId).connect(jwk);
 
     const uuid = uuidv4();
 
     const payload = { id: uuid, name: title, description, dataTxId };
+
+    await waitFor(500);
 
     // let warp throw error if it can't perform the writeInteraction
     await contract.writeInteraction({
@@ -62,9 +65,12 @@ async function updateRepo(id: string, dataTxId: string) {
     if (!id || !title || !dataTxId)
         throw '[ warp ] No id, title or dataTxId to update repo ';
 
-    const contract = getWarp().contract(contractTxId).connect(jwk);
+    // const contract = getWarp().contract(contractTxId).connect(jwk);
 
     const payload = { id, name: title, description, dataTxId };
+
+    await waitFor(500);
+
     // let warp throw error if it can't perform the writeInteraction
     await contract.writeInteraction({
         function: 'updateRepositoryTxId',

@@ -33,6 +33,9 @@ export function getTags(createNewRepo: boolean) {
     ] as Tag[];
 }
 
+export const waitFor = (delay: number) =>
+    new Promise((res) => setTimeout(res, delay));
+
 /* Function to remove warp cache folder before running */
 export async function removeCacheFolder() {
     const readdir = util.promisify(fs.readdir);
