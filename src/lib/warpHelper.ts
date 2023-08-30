@@ -1,4 +1,4 @@
-import { WarpFactory } from 'warp-contracts';
+import { WarpFactory, defaultCacheOptions } from 'warp-contracts';
 import { v4 as uuidv4 } from 'uuid';
 import {
     getDescription,
@@ -14,7 +14,11 @@ const contractTxId = getWarpContractTxId();
 const title = getTitle();
 const description = getDescription();
 
-const getWarp = () => WarpFactory.forMainnet();
+const getWarp = () =>
+    WarpFactory.forMainnet({
+        ...defaultCacheOptions,
+        inMemory: true,
+    });
 const contract = getWarp().contract(contractTxId).connect(jwk);
 
 export async function getRepos() {

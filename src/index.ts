@@ -3,7 +3,7 @@
 import { zipRepoJsZip } from './lib/zipHelper';
 import { uploadRepo } from './lib/arweaveHelper';
 import { getRepos, postRepoToWarp } from './lib/warpHelper';
-import { getTags, getTitle, removeCacheFolder } from './lib/common';
+import { getTags, getTitle } from './lib/common';
 
 // Set up constants
 const PATH = '.';
@@ -25,9 +25,6 @@ async function main() {
     }
 
     console.log(`[ PL Sync ] Starting sync for repo '${title}'`);
-
-    // delete warp cache folder
-    await removeCacheFolder();
 
     // get existing repos for this wallet
     const repos = await getRepos();
