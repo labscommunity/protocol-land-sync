@@ -1,5 +1,11 @@
 # @7i7o/pl-sync
 
+## 0.0.8
+
+### Patch Changes
+
+-   8e7bdca: move warp cache to memory so it doesn't get synced with repo
+
 ## 0.0.7
 
 ### Patch Changes
