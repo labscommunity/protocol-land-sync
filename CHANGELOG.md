@@ -1,5 +1,11 @@
 # @7i7o/pl-sync
 
+## 0.0.6
+
+### Patch Changes
+
+-   7373258: Use the same warp contract instance + add delay before calling warp interactions
+
 ## 0.0.5
 
 ### Patch Changes
