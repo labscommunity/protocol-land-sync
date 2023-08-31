@@ -5,6 +5,8 @@ import { Tag } from 'arweave/node/lib/transaction';
 import { config } from 'dotenv';
 config();
 
+const DESCRIPTION_PLACEHOLDER = 'Descentralized repo description';
+
 export const getWallet = () => JSON.parse(process.env.WALLET as string);
 
 export const getWarpContractTxId = () =>
@@ -13,7 +15,9 @@ export const getWarpContractTxId = () =>
 export const getTitle = () => process.env.REPO_TITLE as string;
 
 export const getDescription = () =>
-    process.env.REPO_DESCRIPTION ? process.env.REPO_DESCRIPTION : '';
+    process.env.REPO_DESCRIPTION
+        ? process.env.REPO_DESCRIPTION
+        : DESCRIPTION_PLACEHOLDER;
 
 export function getTags(createNewRepo: boolean) {
     return [
@@ -31,3 +35,8 @@ export function getTags(createNewRepo: boolean) {
 
 export const waitFor = (delay: number) =>
     new Promise((res) => setTimeout(res, delay));
+
+export const exitWithError = (message: string) => {
+    console.error(`\n${message}\n`);
+    process.exit(1);
+};

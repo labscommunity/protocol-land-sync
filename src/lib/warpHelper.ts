@@ -34,15 +34,13 @@ export async function getRepos() {
     return response.result as { id: string; name: string }[];
 }
 
-export function postRepoToWarp(
+export async function postRepoToWarp(
     dataTxId: string,
     repoInfo?: { id: string } | undefined
 ) {
-    if (!repoInfo) {
-        newRepo(dataTxId);
-    } else {
-        updateRepo(repoInfo.id, dataTxId);
-    }
+    return !repoInfo
+        ? await newRepo(dataTxId)
+        : await updateRepo(repoInfo.id, dataTxId);
 }
 
 async function newRepo(dataTxId: string) {
@@ -62,6 +60,8 @@ async function newRepo(dataTxId: string) {
         payload,
     });
 
+    console.log(`[ warp ] Repo '${title}' initialized with id '${uuid}'`);
+
     return { id: uuid };
 }
 
@@ -80,6 +80,8 @@ async function updateRepo(id: string, dataTxId: string) {
         function: 'updateRepositoryTxId',
         payload,
     });
+
+    console.log(`[ warp ] Repo '${title}' with id '${payload.id}' updated`);
 
     return { id: payload.id };
 }

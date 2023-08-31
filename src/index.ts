@@ -3,7 +3,7 @@
 import { zipRepoJsZip } from './lib/zipHelper';
 import { uploadRepo } from './lib/arweaveHelper';
 import { getRepos, postRepoToWarp } from './lib/warpHelper';
-import { getTags, getTitle } from './lib/common';
+import { exitWithError, getTags, getTitle } from './lib/common';
 
 // Set up constants
 const PATH = '.';
@@ -17,12 +17,10 @@ const title = getTitle();
 
 async function main() {
     // check name complies with name rules
-    if (!NAME_REGEX.test(title)) {
-        console.error(
+    if (!NAME_REGEX.test(title))
+        exitWithError(
             `[ PL Sync ] Repo name can ONLY contain ASCII letters, digits and the characters '.', '-', and '_'`
         );
-        process.exit(1);
-    }
 
     console.log(`[ PL Sync ] Starting sync for repo '${title}'`);
 
@@ -50,9 +48,13 @@ async function main() {
 
     const tags = getTags(!repoInfo ? true : false);
 
-    const dataTxId = await uploadRepo(zipBuffer, tags);
+    try {
+        const dataTxId = await uploadRepo(zipBuffer, tags);
 
-    if (dataTxId) postRepoToWarp(dataTxId, repoInfo);
+        if (dataTxId) await postRepoToWarp(dataTxId, repoInfo);
+    } catch (error) {
+        exitWithError(error as string);
+    }
 }
 
 // Run the main function

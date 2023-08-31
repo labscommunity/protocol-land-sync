@@ -44,7 +44,18 @@ async function arweaveUpload(zipBuffer: Buffer, tags: Tag[]) {
     await arweave.transactions.sign(tx, jwk);
     const response = await arweave.transactions.post(tx);
 
-    console.log(response.status);
+    console.log(`${response.status} - ${response.statusText}`);
+
+    if (response.status !== 200) {
+        // throw error if arweave tx wasn't posted
+        throw `[ arweave ] Posting repo to arweave failed.\n\tError: '${
+            response.status
+        }' - '${
+            response.statusText
+        }'\n\tCheck if you have plenty $AR to upload ~${Math.ceil(
+            dataSize / 1024
+        )} KB of data.`;
+    }
 
     return tx.id;
 }
