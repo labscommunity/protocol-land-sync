@@ -1,5 +1,11 @@
 # @7i7o/pl-sync
 
+## 0.0.9
+
+### Patch Changes
+
+-   2ec5af0: add arweave errors handling + repo description placeholder
+
 ## 0.0.8
 
 ### Patch Changes
