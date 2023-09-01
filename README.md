@@ -28,12 +28,23 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
-            - uses: actions/setup-node@v3
+            - name: 'Checkout repo (default branch)'
+              uses: actions/checkout@v3
+              with:
+                  # fetch all history for all branches:
+                  fetch-depth: 0
+            - name: 'Checkout all branches'
+              run: |
+                  default_branch=$(git branch | grep '*' | sed 's/\* //')
+                  for abranch in $(git branch -a | grep -v HEAD | grep remotes | sed "s/remotes\/origin\///g"); do git checkout $abranch ; done
+                  git checkout $default_branch
+                  git branch -a
+            - name: 'Setup node 18'
+              uses: actions/setup-node@v3
               with:
                   node-version: 18.x
-
-            - run: npx @7i7o/pl-sync
+            - name: 'Sync repo to Protocol Land'
+              run: npx @7i7o/pl-sync
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   REPO_TITLE: ${{ github.event.repository.name }}
