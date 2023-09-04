@@ -4,14 +4,21 @@ Package to sync git repos into Protocol Land
 
 ## Usage
 
+To sync a repo into Protocol Land you can either run it manually from your local git repo's root folder, or you can set up a Github Action if you have it hosted in Github.
+
+For both methods, **you need an Arweave wallet with some $AR** to pay for the upload, unless your repo uses less than 100KB of data.
+
 ### Github Actions
 
 1. Open the github repo you want to sync to Protocol Land and add a new secret
    (Repo -> Settings -> Secrets and variables -> Actions -> New Repository Secret)
 
 2. Fill in `WALLET` for "Name", your Arweave wallet's JWK in the "Secret" field and then click on the "Add secret" button.
+
 3. Switch into the Actions tab and click "New workflow"
+
 4. On the "Choose a workflow" page, click on "set up a workflow yourself"
+
 5. Paste this into the `.yml` file:
 
 ```yaml
@@ -52,14 +59,24 @@ jobs:
                   WALLET: ${{ secrets.WALLET }}
 ```
 
-> **NOTE**: Notice that this GH Action will run on every push to the 'main' branch. If you read the comments on the `.yml` code, you can change it to be run manually by commenting the 3 lines after the `on:` and uncommenting the `workflow_dispatch:` line.
+> **NOTE**: Notice that this GH Action **will run on every push to the 'main' branch**.
+> If you read the comments on the `.yml` code, you can change it to be run manually by commenting the 3 lines after the `on:` and uncommenting the `workflow_dispatch:` line.
+>
+> You can also comment the whole `'Checkout all branches'` section if you only want to sync the main branch.
 
 ### Locally
 
 1. You need a node package manager installed (`npm`, `yarn` or `pnpm`) to run it locally.
 
-2. Set up a `.env` file in the root folder with `WALLET='YOUR_WALLET_JWK_HERE'` and paste your Arweave wallet's JWK in there
+2. Make sure you have a `.gitignore` for all the files you don't want synced.
 
-3. From the root folder of your repo, run Run `npx @7i7o/pl-sync`, `yarn @7i7o/pl-sync` or `pnpx @7i7o/pl-sync` depending on which package manager you have installed.
+3. In your repo's root foler, set up a `.env` file with `WALLET='YOUR_WALLET_JWK_HERE'` and paste your Arweave wallet's JWK in that environment variable. If your repo (compressed) is larger than 100kb, you have to fund your wallet with enough $AR to pay for the transaction.
 
-4. Go into [Protocol Land's page](https://protocol-land.vercel.app/) and login with your Arweave wallet.
+4. **(optional)** Checkout locally all the branches you want synced. The tool uploads all the branches you have checkout locally with git.
+   You can run this bash command to checkout all the remote branches:
+
+    `default_branch=$(git branch | grep '*' | sed 's/\* //') && for abranch in $(git branch -a | grep -v HEAD | grep remotes | sed "s/remotes\/origin\///g"); do git checkout $abranch ; done && git checkout $default_branch`
+
+5. From the root folder of your repo, run Run `npx @7i7o/pl-sync`, `yarn @7i7o/pl-sync` or `pnpx @7i7o/pl-sync` depending on which package manager you have installed.
+
+6. Go into [Protocol Land's page](https://protocol-land.vercel.app/) and login with the Arweave wallet you used to sync your repo.
