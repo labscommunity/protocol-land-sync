@@ -10,7 +10,9 @@ For both methods, **you need an Arweave wallet with some $AR** to pay for the up
 
 ### Github Actions
 
-1. Open the github repo you want to sync to Protocol Land and add a new secret
+#### From the Github webpage
+
+1. In github.com, open the repo you want to sync to Protocol Land and add a new secret
    (Repo -> Settings -> Secrets and variables -> Actions -> New Repository Secret)
 
 2. Fill in `WALLET` for "Name", your Arweave wallet's JWK in the "Secret" field and then click on the "Add secret" button.
@@ -19,7 +21,7 @@ For both methods, **you need an Arweave wallet with some $AR** to pay for the up
 
 4. On the "Choose a workflow" page, click on "set up a workflow yourself"
 
-5. Paste this into the `.yml` file:
+5. Paste this into the `.yml` file and commit the changes:
 
 ```yaml
 name: Protocol Land Sync
@@ -64,7 +66,17 @@ jobs:
 >
 > You can also comment the whole `'Checkout all branches'` section if you only want to sync the main branch.
 
-### Locally
+#### From your local git folder
+
+Follow `1.` and `2.` from the previous section to set up a Github Secret
+
+3. Create a file called `pl-sync.yml` in a subfolder called `.github/workflows` under your repo's root (create the folder if it doesn't exist).
+
+4. Paste the same contents as in the step `5.` in the previous section.
+
+5. Commit and push to your remote git repo.
+
+### Locally (without Github Action)
 
 1. You need a node package manager installed (`npm`, `yarn` or `pnpm`) to run it locally.
 
