@@ -1,5 +1,11 @@
 # @7i7o/pl-sync
 
+## 0.0.10
+
+### Patch Changes
+
+-   8e6a17b: use arbundles package for bundlr uploads
+
 ## 0.0.9
 
 ### Patch Changes
