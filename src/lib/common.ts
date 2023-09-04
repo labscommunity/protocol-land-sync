@@ -19,11 +19,11 @@ export const getDescription = () =>
         ? process.env.REPO_DESCRIPTION
         : DESCRIPTION_PLACEHOLDER;
 
-export function getTags(createNewRepo: boolean) {
+export async function getTags(createNewRepo: boolean) {
     return [
         { name: 'App-Name', value: 'Protocol.Land' },
         { name: 'Content-Type', value: 'application/zip' },
-        { name: 'Creator', value: getAddress() },
+        { name: 'Creator', value: await getAddress() },
         { name: 'Title', value: getTitle() },
         { name: 'Description', value: getDescription() },
         {

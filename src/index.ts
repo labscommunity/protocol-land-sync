@@ -46,7 +46,7 @@ async function main() {
         process.exit(1);
     }
 
-    const tags = getTags(!repoInfo ? true : false);
+    const tags = await getTags(!repoInfo ? true : false);
 
     try {
         const dataTxId = await uploadRepo(zipBuffer, tags);

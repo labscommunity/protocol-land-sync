@@ -1,7 +1,7 @@
 import Arweave from 'arweave';
-import Bundlr from '@bundlr-network/client';
 import { getWallet } from './common';
 import { Tag } from 'arweave/node/lib/transaction';
+import { ArweaveSigner, createData } from 'arbundles';
 
 const jwk = getWallet();
 
@@ -60,40 +60,30 @@ async function arweaveUpload(zipBuffer: Buffer, tags: Tag[]) {
     return tx.id;
 }
 
-async function bundlrUpload(
-    zipBuffer: Buffer,
-    tags: Tag[],
-    tryFunding?: boolean
-) {
+export async function bundlrUpload(zipBuffer: Buffer, tags: Tag[]) {
     if (!jwk) throw '[ bundlr ] No jwk wallet supplied';
 
-    const bundlr = new Bundlr('http://node1.bundlr.network', 'arweave', jwk);
-    await bundlr.ready();
+    // Testing upload with arbundles
+    const node = 'https://node2.bundlr.network';
+    const uint8ArrayZip = new Uint8Array(zipBuffer);
+    const signer = new ArweaveSigner(getWallet());
 
-    console.log(`[ bundlr ] Using wallet: ${bundlr.address}`);
+    const dataItem = createData(uint8ArrayZip, signer, { tags });
 
-    const atomicBalance = await bundlr.getLoadedBalance();
-    // const convertedBalance = bundlr.utils.fromAtomic(atomicBalance);
-    console.log(`[ bundlr ] wallet balance in bundlr node: ${atomicBalance}`);
+    await dataItem.sign(signer);
 
-    if (tryFunding) {
-        const dataSize = zipBuffer.length;
-        const price = await bundlr.getPrice(dataSize);
-        console.log(`[ bundlr ] price to store ${dataSize} bytes: ${price}`);
+    const res = await fetch(`${node}/tx`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/octet-stream',
+        },
+        body: dataItem.getRaw(),
+    });
 
-        if (price > atomicBalance) {
-            // let bundlr throw error if it cannot fund
-            const response = await bundlr.fund(price.minus(atomicBalance));
-            console.log(
-                `[ bundlr ] Successfully funded! txID: ${response.id} - amount funded: ${response.quantity}`
-            );
-        }
-    }
+    if (res.status >= 400)
+        throw new Error(
+            `[ bundlr ] Posting repo w/bundlr faile. Error: ${res.status} - ${res.statusText}`
+        );
 
-    // let bundlr throw error if it cannot fund
-    const response = await bundlr.upload(zipBuffer, { tags });
-    console.log(
-        `[ bundlr ] Data uploaded -> https://arweave.net/${response.id}`
-    );
-    return response.id;
+    return dataItem.id;
 }
