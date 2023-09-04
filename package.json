@@ -35,7 +35,7 @@
     },
     "homepage": "https://github.com/7i7o/pl-sync#readme",
     "dependencies": {
-        "@bundlr-network/client": "^0.11.13",
+        "arbundles": "^0.9.9",
         "arweave": "^1.14.4",
         "dotenv": "^16.3.1",
         "jszip": "^3.10.1",
