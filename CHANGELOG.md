@@ -1,5 +1,11 @@
 # @7i7o/pl-sync
 
+## 0.1.0
+
+### Minor Changes
+
+-   68ad09d: Migrate repo to clabs org & npm package to protocol.land org
+
 ## 0.0.10
 
 ### Patch Changes
