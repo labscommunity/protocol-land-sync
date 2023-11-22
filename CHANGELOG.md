@@ -1,4 +1,4 @@
-# @7i7o/pl-sync
+# @protocol.land/sync
 
 ## 0.1.0
 
