@@ -53,7 +53,7 @@ jobs:
               with:
                   node-version: 18.x
             - name: 'Sync repo to Protocol Land'
-              run: npx @7i7o/pl-sync
+              run: npx @protocol.land/sync
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   REPO_TITLE: ${{ github.event.repository.name }}
@@ -70,7 +70,7 @@ jobs:
 
 Follow `1.` and `2.` from the previous section to set up a Github Secret
 
-3. Create a file called `pl-sync.yml` in a subfolder called `.github/workflows` under your repo's root (create the folder if it doesn't exist).
+3. Create a file called `protocol-land-sync.yml` in a subfolder called `.github/workflows` under your repo's root (create the folder if it doesn't exist).
 
 4. Paste the same contents as in the step `5.` in the previous section.
 
@@ -89,6 +89,6 @@ Follow `1.` and `2.` from the previous section to set up a Github Secret
 
     `default_branch=$(git branch | grep '*' | sed 's/\* //') && for abranch in $(git branch -a | grep -v HEAD | grep remotes | sed "s/remotes\/origin\///g"); do git checkout $abranch ; done && git checkout $default_branch`
 
-5. From the root folder of your repo, run Run `npx @7i7o/pl-sync`, `yarn @7i7o/pl-sync` or `pnpx @7i7o/pl-sync` depending on which package manager you have installed.
+5. From the root folder of your repo, run Run `npx @protocol.land/sync`, `yarn @protocol.land/sync` or `pnpx @protocol.land/sync` depending on which package manager you have installed.
 
-6. Go into [Protocol Land's page](https://protocol-land.vercel.app/) and login with the Arweave wallet you used to sync your repo.
+6. Go into [Protocol Land's page](https://protocol.land/) and login with the Arweave wallet you used to sync your repo.

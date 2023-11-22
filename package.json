@@ -1,12 +1,12 @@
 {
-    "name": "@7i7o/pl-sync",
+    "name": "@protocol.land/sync",
     "version": "0.0.10",
     "description": "Sync git repos to Protocol Land",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
     "bin": {
-        "pl-sync": "dist/index.js"
+        "proland-sync": "dist/index.js"
     },
     "scripts": {
         "build": "tsup src/index.ts --format cjs,esm --dts",
@@ -31,9 +31,9 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/7i7o/pl-sync.git"
+        "url": "https://github.com/labscommunity/protocol-land-sync.git"
     },
-    "homepage": "https://github.com/7i7o/pl-sync#readme",
+    "homepage": "https://github.com/labscommunity/protocol-land-sync#readme",
     "dependencies": {
         "arbundles": "^0.9.9",
         "arweave": "^1.14.4",
