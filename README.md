@@ -82,7 +82,7 @@ Follow `1.` and `2.` from the previous section to set up a Github Secret
 
 2. Make sure you have a `.gitignore` for all the files you don't want synced.
 
-3. In your repo's root foler, set up a `.env` file with `WALLET='YOUR_WALLET_JWK_HERE'` and paste your Arweave wallet's JWK in that environment variable. If your repo (compressed) is larger than 100kb, you have to fund your wallet with enough $AR to pay for the transaction.
+3. In your repo's root folder, set up a `.env` file with `WALLET='YOUR_WALLET_JWK_HERE'` and paste your Arweave wallet's JWK in that environment variable. If your repo (compressed) is larger than 100kb, you have to fund your wallet with enough $AR to pay for the transaction. Also add `REPO_TITLE='Your Repo Name Here'` and `REPO_DESCRIPTION='Your Repo Description Here'` to set up your repo and description.
 
 4. **(optional)** Checkout locally all the branches you want synced. The tool uploads all the branches you have checkout locally with git.
    You can run this bash command to checkout all the remote branches:
