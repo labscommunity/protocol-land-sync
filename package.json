@@ -35,18 +35,18 @@
     },
     "homepage": "https://github.com/labscommunity/protocol-land-sync#readme",
     "dependencies": {
-        "arbundles": "^0.9.9",
+        "arbundles": "^0.9.11",
         "arweave": "^1.14.4",
         "dotenv": "^16.3.1",
         "jszip": "^3.10.1",
-        "uuid": "^9.0.0",
-        "warp-contracts": "^1.4.17"
+        "uuid": "^9.0.1",
+        "warp-contracts": "^1.4.25"
     },
     "devDependencies": {
         "@changesets/cli": "^2.26.2",
-        "@types/node": "^20.5.6",
-        "@types/uuid": "^9.0.2",
-        "tsup": "^7.2.0",
-        "typescript": "^5.2.2"
+        "@types/node": "^20.9.4",
+        "@types/uuid": "^9.0.7",
+        "tsup": "^8.0.1",
+        "typescript": "^5.3.2"
     }
 }
