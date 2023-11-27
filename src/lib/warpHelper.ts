@@ -8,6 +8,7 @@ import {
     waitFor,
 } from './common';
 import { getAddress } from './arweaveHelper';
+import { trackAmplitudeAnalyticsEvent } from './analytics';
 
 const jwk = getWallet();
 const contractTxId = getWarpContractTxId();
@@ -38,9 +39,56 @@ export async function postRepoToWarp(
     dataTxId: string,
     repoInfo?: { id: string } | undefined
 ) {
-    return !repoInfo
-        ? await newRepo(dataTxId)
-        : await updateRepo(repoInfo.id, dataTxId);
+    if (repoInfo) {
+        try {
+            const result = await updateRepo(repoInfo.id, dataTxId);
+            await trackAmplitudeAnalyticsEvent(
+                'Repository',
+                'Add files to repo',
+                'Add files',
+                {
+                    repo_name: title,
+                    repo_id: result.id,
+                    result: 'SUCCESS',
+                }
+            );
+            return result;
+        } catch (error) {
+            await trackAmplitudeAnalyticsEvent(
+                'Repository',
+                'Add files to repo',
+                'Add files',
+                {
+                    repo_name: title,
+                    repo_id: repoInfo.id,
+                    result: 'FAILED',
+                    error: 'Failed to update repository',
+                }
+            );
+            throw error;
+        }
+    } else {
+        try {
+            const result = await newRepo(dataTxId);
+            await trackAmplitudeAnalyticsEvent(
+                'Repository',
+                'Successfully created a repo',
+                'Create new repo',
+                {
+                    repo_id: result.id,
+                    repo_name: title,
+                }
+            );
+            return result;
+        } catch (error) {
+            await trackAmplitudeAnalyticsEvent(
+                'Repository',
+                'Failed to create a new repo',
+                'Create new repo'
+            );
+            throw error;
+        }
+    }
 }
 
 async function newRepo(dataTxId: string) {

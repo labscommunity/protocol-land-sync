@@ -5,7 +5,7 @@ import { Tag } from 'arweave/node/lib/transaction';
 import { config } from 'dotenv';
 config();
 
-const DESCRIPTION_PLACEHOLDER = 'Descentralized repo description';
+const DESCRIPTION_PLACEHOLDER = 'Decentralized repo description';
 
 export const getWallet = () => JSON.parse(process.env.WALLET as string);
 
