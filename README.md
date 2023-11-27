@@ -103,7 +103,3 @@ Follow `1.` and `2.` from the previous section to set up a Github Secret
 5. From the root folder of your repo, run Run `npx @protocol.land/sync`, `yarn @protocol.land/sync` or `pnpx @protocol.land/sync` depending on which package manager you have installed.
 
 6. Go into [Protocol Land's page](https://protocol.land/) and login with the Arweave wallet you used to sync your repo.
-
-```
-
-```

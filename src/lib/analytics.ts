@@ -2,7 +2,7 @@ import * as amplitude from '@amplitude/analytics-node';
 import { getAddress } from './arweaveHelper';
 
 const AMPLITUDE_TRACKING_ID = '92a463755ed8c8b96f0f2353a37b7b2';
-const PLATFORM = 'pl-sync';
+const PLATFORM = '@protocol.land/sync';
 
 let isInitialized = false;
 
