@@ -1,5 +1,12 @@
 # @protocol.land/sync
 
+## 0.1.2
+
+### Patch Changes
+
+-   eee98c7: remove yarn from readme
+-   2e89197: Add Analytics and Update Readme
+
 ## 0.1.1
 
 ### Patch Changes
