@@ -103,6 +103,19 @@ Follow `1.` and `2.` from the previous section to set up a GitHub Secret.
     default_branch=$(git branch | grep '*' | sed 's/\* //') && for abranch in $(git branch -a | grep -v HEAD | grep remotes | sed "s/remotes\/origin\///g"); do git checkout $abranch ; done && git checkout $default_branch
     ```
 
-5. From the root folder of your repo, run `npx @protocol.land/sync`, `yarn @protocol.land/sync`, or `pnpx @protocol.land/sync` depending on which package manager you have installed.
+5. From the root directory of your repository, execute the following command based on your preferred package manager:
+
+    ```bash
+    # Using npx
+    npx @protocol.land/sync
+
+    # Alternatively, using yarn
+    yarn @protocol.land/sync
+
+    # Or using pnpm
+    pnpx @protocol.land/sync
+    ```
+
+    Choose the appropriate command corresponding to the package manager installed on your system.
 
 6. Go to [Protocol Land's page](https://protocol.land/) and log in with the Arweave wallet you used to sync your repo.
