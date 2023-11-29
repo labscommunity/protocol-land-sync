@@ -79,7 +79,7 @@ Follow `1.` and `2.` from the previous section to set up a GitHub Secret.
 
 ### Locally (Without GitHub Action)
 
-1. Install a node package manager (`npm`, `yarn`, or `pnpm`) to run it locally.
+1. Install a node package manager (`npm` or `pnpm`) to run it locally.
 
 2. Ensure you have a `.gitignore` for all the files you don't want synced.
 
@@ -109,10 +109,7 @@ Follow `1.` and `2.` from the previous section to set up a GitHub Secret.
     # Using npx
     npx @protocol.land/sync
 
-    # Alternatively, using yarn
-    yarn @protocol.land/sync
-
-    # Or using pnpm
+    # Or using pnpx
     pnpx @protocol.land/sync
     ```
 
