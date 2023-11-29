@@ -1,25 +1,26 @@
 # Protocol Land Sync
 
-Package to sync git repos into Protocol Land
+The Protocol Land Sync package simplifies the process of syncing Git repositories with Protocol Land.
 
 ## Usage
 
-To sync a repo into Protocol Land you can either run it manually from your local git repo's root folder, or you can set up a Github Action if you have it hosted in Github.
+To sync a repository with Protocol Land, you can either run it manually from your local Git repository's root folder or set up a GitHub Action if your repository is hosted on GitHub.
 
-For both methods, **you need an Arweave wallet with some $AR** to pay for the upload, unless your repo uses less than 100KB of data.
+For both methods, **you need an Arweave wallet with some $AR** to pay for the upload, unless your repository uses less than 100KB of data.
 
-### Github Actions
+### GitHub Actions
 
-#### From the Github webpage
+#### From the GitHub Webpage
 
-1. In github.com, open the repo you want to sync to Protocol Land and add a new secret
-   (Repo -> Settings -> Secrets and variables -> Actions -> New Repository Secret)
+1. Open the repository you want to sync to Protocol Land on github.com. Then, go into:
 
-2. Fill in `WALLET` for "Name", your Arweave wallet's JWK in the "Secret" field and then click on the "Add secret" button.
+    Settings Tab -> Secrets and variables -> Actions -> New Repository Secret
 
-3. Switch into the Actions tab and click "New workflow"
+2. Add a new secret with `WALLET` for "Name," your Arweave wallet's JWK in the "Secret" field, and click the "Add secret" button.
 
-4. On the "Choose a workflow" page, click on "set up a workflow yourself"
+3. Switch to the Actions tab and click "New workflow."
+
+4. On the "Choose a workflow" page, click "set up a workflow yourself."
 
 5. Paste this into the `.yml` file and commit the changes:
 
@@ -61,26 +62,26 @@ jobs:
                   WALLET: ${{ secrets.WALLET }}
 ```
 
-> **NOTE**: Notice that this GH Action **will run on every push to the 'main' branch**.
-> If you read the comments on the `.yml` code, you can change it to be run manually by commenting the 3 lines after the `on:` and uncommenting the `workflow_dispatch:` line.
+> **NOTE**: This GitHub Action **will run on every push to the 'main' branch**.
+> If you want to run it manually, comment the lines after `on:` and uncomment the `workflow_dispatch:` line.
 >
-> You can also comment the whole `'Checkout all branches'` section if you only want to sync the main branch.
+> You can also comment the entire `'Checkout all branches'` section if you only want to sync the main branch.
 
-#### From your local git folder
+#### From Your Local Git Folder
 
-Follow `1.` and `2.` from the previous section to set up a Github Secret
+Follow `1.` and `2.` from the previous section to set up a GitHub Secret.
 
 3. Create a file called `protocol-land-sync.yml` in a subfolder called `.github/workflows` under your repo's root (create the folder if it doesn't exist).
 
-4. Paste the same contents as in the step `5.` in the previous section.
+4. Paste the same contents as in step `5.` in the previous section.
 
-5. Commit and push to your remote git repo.
+5. Commit and push to your remote Git repo.
 
-### Locally (without Github Action)
+### Locally (Without GitHub Action)
 
-1. You need a node package manager installed (`npm`, `yarn` or `pnpm`) to run it locally.
+1. Install a node package manager (`npm`, `yarn`, or `pnpm`) to run it locally.
 
-2. Make sure you have a `.gitignore` for all the files you don't want synced.
+2. Ensure you have a `.gitignore` for all the files you don't want synced.
 
 3. Navigate to the root folder of your repository and create a `.env` file.
    Inside the `.env` file, include the following lines:
@@ -95,11 +96,13 @@ Follow `1.` and `2.` from the previous section to set up a Github Secret
     If the compressed size of your repository exceeds 100kb, ensure your wallet has enough $AR to cover the transaction fees.
     These environment variables (`WALLET`, `REPO_TITLE`, and `REPO_DESCRIPTION`) are crucial for setting up your repository and providing a meaningful description.
 
-4. **(optional)** Checkout locally all the branches you want synced. The tool uploads all the branches you have checkout locally with git.
-   You can run this bash command to checkout all the remote branches:
+4. **(optional)** Checkout locally all the branches you want synced. The tool uploads all the branches you have checked out locally with Git.
+   Run this bash command to checkout all the remote branches:
 
-    `default_branch=$(git branch | grep '*' | sed 's/\* //') && for abranch in $(git branch -a | grep -v HEAD | grep remotes | sed "s/remotes\/origin\///g"); do git checkout $abranch ; done && git checkout $default_branch`
+    ```bash
+    default_branch=$(git branch | grep '*' | sed 's/\* //') && for abranch in $(git branch -a | grep -v HEAD | grep remotes | sed "s/remotes\/origin\///g"); do git checkout $abranch ; done && git checkout $default_branch
+    ```
 
-5. From the root folder of your repo, run Run `npx @protocol.land/sync`, `yarn @protocol.land/sync` or `pnpx @protocol.land/sync` depending on which package manager you have installed.
+5. From the root folder of your repo, run `npx @protocol.land/sync`, `yarn @protocol.land/sync`, or `pnpx @protocol.land/sync` depending on which package manager you have installed.
 
-6. Go into [Protocol Land's page](https://protocol.land/) and login with the Arweave wallet you used to sync your repo.
+6. Go to [Protocol Land's page](https://protocol.land/) and log in with the Arweave wallet you used to sync your repo.
