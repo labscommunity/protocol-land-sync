@@ -9,7 +9,6 @@ import { exitWithError, getTags, getTitle } from './lib/common';
 const PATH = '.';
 // const FOLDER_TO_ZIP = '.git'; // Only compress `.git` folder
 const FOLDER_TO_ZIP = '.'; // Compress the full repo
-const USE_GITIGNORE = true; // Use `.gitignore` to avoid compressing secrets
 
 // Set up a regex for repo names compliance
 const NAME_REGEX = /^[a-zA-Z0-9._-]+$/;
@@ -35,12 +34,7 @@ async function main() {
     // compress the repo
     let zipBuffer;
     try {
-        zipBuffer = await zipRepoJsZip(
-            title,
-            PATH,
-            FOLDER_TO_ZIP,
-            USE_GITIGNORE
-        );
+        zipBuffer = await zipRepoJsZip(title, PATH, FOLDER_TO_ZIP);
     } catch (error) {
         console.error('Error zipping repository:', error);
         process.exit(1);

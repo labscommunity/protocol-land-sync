@@ -1,63 +1,94 @@
-import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 import path from 'path';
 import JSZip from 'jszip';
+import { exec } from 'child_process';
 
-export function writeBufferToFile(buffer: Buffer, filename: string) {
+const PL_TMP_PATH = '.protocol.land';
+
+export async function writeBufferToFile(buffer: Buffer, filename: string) {
     try {
-        fs.writeFileSync(filename, buffer);
+        await fsPromises.writeFile(filename, buffer);
         console.log(`File "${filename}" written successfully.`);
     } catch (error) {
         console.error('Error writing file: ', error);
     }
 }
 
-function loadIgnoreList(rootPath: string) {
-    const gitignorePath = path.join(rootPath, '.gitignore');
-    if (fs.existsSync(gitignorePath)) {
-        const gitignoreContent = fs.readFileSync(gitignorePath, 'utf-8');
-        return gitignoreContent
-            .split('\n')
-            .map((line) => line.trim())
-            .filter((line) => line && !line.startsWith('#'));
-    }
-    return [];
+export async function getGitTrackedFiles() {
+    return new Promise<string[]>((resolve, reject) => {
+        exec('git ls-files', { encoding: 'utf-8' }, (error, stdout) => {
+            if (error) {
+                reject(new Error('Error getting git tracked files'));
+            } else {
+                resolve(stdout.trim().split('\n'));
+            }
+        });
+    });
+}
+
+export async function getGitDir() {
+    return new Promise<string>((resolve, reject) => {
+        exec(
+            'git rev-parse --git-dir',
+            { encoding: 'utf-8' },
+            (error, stdout) => {
+                if (error) {
+                    reject(new Error('Error getting git directory'));
+                } else {
+                    resolve(stdout.trim());
+                }
+            }
+        );
+    });
 }
 
 export async function zipRepoJsZip(
     mainPath: string,
     zipRoot: string,
-    folderToZip?: string,
-    useGitignore?: boolean
+    folderToZip?: string
 ) {
     if (!folderToZip) folderToZip = zipRoot;
 
-    const ignoreSet = new Set(useGitignore ? loadIgnoreList(zipRoot) : []);
-
-    const zip = new JSZip();
-
     const filesToInclude: string[] = [];
 
-    const walk = (currentPath: string) => {
-        const items = fs.readdirSync(currentPath);
+    const gitdir = await getGitDir();
+
+    const ignoreFilesList = [path.join(gitdir, PL_TMP_PATH)];
+
+    const walk = async (currentPath: string) => {
+        const items = await fsPromises.readdir(currentPath);
 
         for (const item of items) {
             const itemPath = path.join(currentPath, item);
 
-            if (ignoreSet.has(item)) {
+            if (
+                ignoreFilesList.some((ignorePath) =>
+                    itemPath.startsWith(ignorePath)
+                )
+            ) {
                 continue;
             }
 
-            if (fs.statSync(itemPath).isDirectory()) {
-                walk(itemPath);
+            const stats = await fsPromises.stat(itemPath);
+
+            if (stats.isDirectory()) {
+                await walk(itemPath);
             } else {
                 filesToInclude.push(itemPath);
             }
         }
     };
-    walk(folderToZip);
+
+    await walk(gitdir);
+
+    const gitTrackedFiles = await getGitTrackedFiles();
+
+    filesToInclude.push(...gitTrackedFiles);
+
+    const zip = new JSZip();
 
     for (const file of filesToInclude) {
-        const content = fs.readFileSync(file);
+        const content = await fsPromises.readFile(file);
         const relativePath = `${mainPath ? mainPath + '/' : ''}${path.relative(
             zipRoot,
             file

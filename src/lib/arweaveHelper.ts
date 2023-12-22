@@ -11,12 +11,12 @@ export async function getAddress() {
 
 export async function uploadRepo(zipBuffer: Buffer, tags: Tag[]) {
     try {
-        // upload compressed repo using bundlr
-        const bundlrTxId = await bundlrUpload(zipBuffer, tags);
-        console.log('Posted Tx to Bundlr: ', bundlrTxId);
-        return bundlrTxId;
+        // upload compressed repo using turbo
+        const turboTxId = await turboUpload(zipBuffer, tags);
+        console.log('Posted Tx to Turbo: ', turboTxId);
+        return turboTxId;
     } catch (error) {
-        console.log('Error uploading using bundlr, trying with Arweave...');
+        console.log('Error uploading using turbo, trying with Arweave...');
         // let Arweave throw if it encounters errors
         const arweaveTxId = await arweaveUpload(zipBuffer, tags);
         console.log('Posted Tx to Arweave: ', arweaveTxId);
@@ -60,11 +60,11 @@ async function arweaveUpload(zipBuffer: Buffer, tags: Tag[]) {
     return tx.id;
 }
 
-export async function bundlrUpload(zipBuffer: Buffer, tags: Tag[]) {
-    if (!jwk) throw '[ bundlr ] No jwk wallet supplied';
+export async function turboUpload(zipBuffer: Buffer, tags: Tag[]) {
+    if (!jwk) throw '[ turbo ] No jwk wallet supplied';
 
     // Testing upload with arbundles
-    const node = 'https://node2.bundlr.network';
+    const node = 'https://turbo.ardrive.io';
     const uint8ArrayZip = new Uint8Array(zipBuffer);
     const signer = new ArweaveSigner(getWallet());
 
@@ -82,7 +82,7 @@ export async function bundlrUpload(zipBuffer: Buffer, tags: Tag[]) {
 
     if (res.status >= 400)
         throw new Error(
-            `[ bundlr ] Posting repo w/bundlr faile. Error: ${res.status} - ${res.statusText}`
+            `[ turbo ] Posting repo with turbo failed. Error: ${res.status} - ${res.statusText}`
         );
 
     return dataItem.id;
