@@ -1,5 +1,11 @@
 # @protocol.land/sync
 
+## 0.1.3
+
+### Patch Changes
+
+-   ebf347c: Update bundler node to Turbo & improve .gitignore handling
+
 ## 0.1.2
 
 ### Patch Changes
