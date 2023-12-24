@@ -5,6 +5,7 @@ import { uploadRepo } from './lib/arweaveHelper';
 import { getRepos, postRepoToWarp } from './lib/warpHelper';
 import { exitWithError, getTags, getTitle } from './lib/common';
 import { v4 as uuidv4 } from 'uuid';
+import { encryptRepo } from './lib/privateRepo';
 
 // Set up constants
 const PATH = '.';
@@ -46,6 +47,13 @@ async function main() {
     const tags = await getTags(!repoInfo ? true : false);
 
     try {
+        const isPrivate = repoInfo?.private || false;
+        const privateStateTxId = repoInfo?.privateStateTxId;
+
+        if (isPrivate && privateStateTxId) {
+            zipBuffer = await encryptRepo(zipBuffer, privateStateTxId);
+        }
+
         const dataTxId = await uploadRepo(zipBuffer, tags);
 
         if (dataTxId) await postRepoToWarp(dataTxId, repoId, repoInfo);

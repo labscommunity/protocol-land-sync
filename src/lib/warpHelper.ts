@@ -31,7 +31,12 @@ export async function getRepos() {
             owner: address,
         },
     });
-    return response.result as { id: string; name: string }[];
+    return response.result as {
+        id: string;
+        name: string;
+        private: boolean;
+        privateStateTxId: string;
+    }[];
 }
 
 export async function postRepoToWarp(
