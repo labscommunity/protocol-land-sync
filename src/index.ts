@@ -4,6 +4,7 @@ import { zipRepoJsZip } from './lib/zipHelper';
 import { uploadRepo } from './lib/arweaveHelper';
 import { getRepos, postRepoToWarp } from './lib/warpHelper';
 import { exitWithError, getTags, getTitle } from './lib/common';
+import { v4 as uuidv4 } from 'uuid';
 
 // Set up constants
 const PATH = '.';
@@ -31,10 +32,12 @@ async function main() {
         (r) => r.name.toLowerCase() === title.toLowerCase()
     );
 
+    const repoId = repoInfo?.id || uuidv4();
+
     // compress the repo
     let zipBuffer;
     try {
-        zipBuffer = await zipRepoJsZip(title, PATH, FOLDER_TO_ZIP);
+        zipBuffer = await zipRepoJsZip(repoId, PATH, FOLDER_TO_ZIP);
     } catch (error) {
         console.error('Error zipping repository:', error);
         process.exit(1);
@@ -45,7 +48,7 @@ async function main() {
     try {
         const dataTxId = await uploadRepo(zipBuffer, tags);
 
-        if (dataTxId) await postRepoToWarp(dataTxId, repoInfo);
+        if (dataTxId) await postRepoToWarp(dataTxId, repoId, repoInfo);
     } catch (error) {
         exitWithError(error as string);
     }

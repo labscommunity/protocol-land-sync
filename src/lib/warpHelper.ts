@@ -1,5 +1,4 @@
 import { WarpFactory, defaultCacheOptions } from 'warp-contracts';
-import { v4 as uuidv4 } from 'uuid';
 import {
     getDescription,
     getTitle,
@@ -37,6 +36,7 @@ export async function getRepos() {
 
 export async function postRepoToWarp(
     dataTxId: string,
+    repoId: string,
     repoInfo?: { id: string } | undefined
 ) {
     if (repoInfo) {
@@ -69,7 +69,7 @@ export async function postRepoToWarp(
         }
     } else {
         try {
-            const result = await newRepo(dataTxId);
+            const result = await newRepo(repoId, dataTxId);
             await trackAmplitudeAnalyticsEvent(
                 'Repository',
                 'Successfully created a repo',
@@ -91,14 +91,12 @@ export async function postRepoToWarp(
     }
 }
 
-async function newRepo(dataTxId: string) {
+async function newRepo(repoId: string, dataTxId: string) {
     if (!title || !dataTxId) throw '[ warp ] No title or dataTx for new repo';
 
     // const contract = getWarp().contract(contractTxId).connect(jwk);
 
-    const uuid = uuidv4();
-
-    const payload = { id: uuid, name: title, description, dataTxId };
+    const payload = { id: repoId, name: title, description, dataTxId };
 
     await waitFor(500);
 
@@ -108,9 +106,9 @@ async function newRepo(dataTxId: string) {
         payload,
     });
 
-    console.log(`[ warp ] Repo '${title}' initialized with id '${uuid}'`);
+    console.log(`[ warp ] Repo '${title}' initialized with id '${repoId}'`);
 
-    return { id: uuid };
+    return { id: repoId };
 }
 
 async function updateRepo(id: string, dataTxId: string) {
