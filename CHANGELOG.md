@@ -1,5 +1,11 @@
 # @protocol.land/sync
 
+## 0.1.4
+
+### Patch Changes
+
+-   555945e: Support repository's new zip folder structure & private repo
+
 ## 0.1.3
 
 ### Patch Changes
