@@ -9,6 +9,11 @@ export async function getAddress() {
     return await initArweave().wallets.jwkToAddress(getWallet());
 }
 
+export function getActivePublicKey() {
+    const wallet = getWallet();
+    return wallet.n;
+}
+
 export async function uploadRepo(zipBuffer: Buffer, tags: Tag[]) {
     try {
         // upload compressed repo using turbo
