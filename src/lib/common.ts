@@ -1,3 +1,4 @@
+import Arweave from 'arweave';
 import { getAddress } from './arweaveHelper';
 import { Tag } from 'arweave/node/lib/transaction';
 
@@ -7,7 +8,23 @@ config();
 
 const DESCRIPTION_PLACEHOLDER = 'Decentralized repo description';
 
-export const getWallet = () => JSON.parse(process.env.WALLET as string);
+const isJwk = (obj: any): boolean => {
+    if (typeof obj !== 'object') return false;
+    const requiredKeys = ['n', 'e', 'd', 'p', 'q', 'dp', 'dq', 'qi'];
+    return requiredKeys.every((key) => key in obj);
+};
+
+export const getWallet = () => {
+    let wallet;
+    try {
+        wallet = JSON.parse(process.env.WALLET as string);
+    } catch (err) {}
+
+    if (isJwk(wallet)) {
+        return wallet;
+    }
+    throw new Error('Arweave wallet key not found or invalid');
+};
 
 export const getWarpContractTxId = () =>
     'w5ZU15Y2cLzZlu3jewauIlnzbKw-OAxbN9G5TbuuiDQ';
@@ -15,9 +32,14 @@ export const getWarpContractTxId = () =>
 export const getTitle = () => process.env.REPO_TITLE as string;
 
 export const getDescription = () =>
-    process.env.REPO_DESCRIPTION
-        ? process.env.REPO_DESCRIPTION
-        : DESCRIPTION_PLACEHOLDER;
+    process.env.REPO_DESCRIPTION || DESCRIPTION_PLACEHOLDER;
+
+export const initArweave = () =>
+    Arweave.init({
+        host: 'arweave.net',
+        port: 443,
+        protocol: 'https',
+    });
 
 export async function getTags(createNewRepo: boolean) {
     return [
