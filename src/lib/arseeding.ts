@@ -37,7 +37,7 @@ async function getSupportedTokens() {
         return supportedTokens;
     } catch (err) {}
 
-    return ['xyz', 'ardrive', 'pia', 'vrt', 'u', 'stamp'];
+    return ['xyz', 'ardrive', 'pia', 'vrt', 'u', 'stamp', 'ar'];
 }
 
 export async function arseedingUpload(zipBuffer: Buffer, tags: Tag[]) {
