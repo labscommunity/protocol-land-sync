@@ -60,9 +60,19 @@ jobs:
                   REPO_TITLE: ${{ github.event.repository.name }}
                   REPO_DESCRIPTION: ${{ github.event.repository.description }}
                   WALLET: ${{ secrets.WALLET }}
+                  # Optional Environment variables for ArSeeding strategy
+                  STRATEGY: "ARSEEDING"
+                  ARSEEDING_TOKEN_SYMBOL: "AR"
+
 ```
 
-> **NOTE**: This GitHub Action **will run on every push to the 'main' branch**.
+> [!NOTE]
+> Only include `STRATEGY` and `ARSEEDING_TOKEN_SYMBOL` environment variables for using [ArSeeding](https://web3infra.dev/docs/arseeding/introduction/lightNode/) to sync your repositories to Protocol Land.
+> Supported Arweave tokens for ArSeeding strategy are: `['XYZ', 'ARDRIVE', 'PIA', 'VRT', 'U', 'STAMP']`.
+> You need [EverPay](https://app.everpay.io/) balances for these tokens to use ArSeeding strategy.
+
+> [!NOTE]
+> This GitHub Action **will run on every push to the 'main' branch**.
 > If you want to run it manually, comment the lines after `on:` and uncomment the `workflow_dispatch:` line.
 >
 > You can also comment the entire `'Checkout all branches'` section if you only want to sync the main branch.
@@ -86,15 +96,22 @@ Follow `1.` and `2.` from the previous section to set up a GitHub Secret.
 3. Navigate to the root folder of your repository and create a `.env` file.
    Inside the `.env` file, include the following lines:
 
-    ```plaintext
+    ```dosini
     WALLET='YOUR_WALLET_JWK_HERE'
     REPO_TITLE='Your Repo Name Here'
     REPO_DESCRIPTION='Your Repo Description Here'
+
+    # Optional Environment variables for ArSeeding strategy
+
+    STRATEGY='ARSEEDING'
+    ARSEEDING_TOKEN_SYMBOL='AR'
     ```
 
     Replace `'YOUR_WALLET_JWK_HERE'` with your Arweave wallet's JWK (JSON Web Key).
     If the compressed size of your repository exceeds 100kb, ensure your wallet has enough $AR to cover the transaction fees.
     These environment variables (`WALLET`, `REPO_TITLE`, and `REPO_DESCRIPTION`) are crucial for setting up your repository and providing a meaningful description.
+
+    `STRATEGY` and `ARSEEDING_TOKEN_SYMBOL` are needed for using [ArSeeding](https://web3infra.dev/docs/arseeding/introduction/lightNode/) to sync repositories to Protocol Land. Supported Arweave tokens for ArSeeding strategy are: `['XYZ', 'ARDRIVE', 'PIA', 'VRT', 'U', 'STAMP']`.
 
 4. **(optional)** Checkout locally all the branches you want synced. The tool uploads all the branches you have checked out locally with Git.
    Run this bash command to checkout all the remote branches:
