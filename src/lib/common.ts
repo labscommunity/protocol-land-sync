@@ -35,8 +35,8 @@ export const getDescription = () =>
     process.env.REPO_DESCRIPTION || DESCRIPTION_PLACEHOLDER;
 
 export const initArweave = () =>
-    Arweave.init({
-        host: 'arweave.net',
+    new Arweave({
+        host: 'ar-io.net',
         port: 443,
         protocol: 'https',
     });
