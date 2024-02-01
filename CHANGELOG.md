@@ -1,5 +1,11 @@
 # @protocol.land/sync
 
+## 0.2.0
+
+### Minor Changes
+
+-   996f56d: Add ArSeeding support to sync repository
+
 ## 0.1.4
 
 ### Patch Changes
