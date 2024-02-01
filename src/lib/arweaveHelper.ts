@@ -1,7 +1,7 @@
-import Arweave from 'arweave';
-import { getWallet } from './common';
+import { getWallet, initArweave } from './common';
 import { Tag } from 'arweave/node/lib/transaction';
 import { ArweaveSigner, createData } from 'arbundles';
+import { arseedingUpload } from './arseeding';
 
 const jwk = getWallet();
 
@@ -15,26 +15,25 @@ export function getActivePublicKey() {
 }
 
 export async function uploadRepo(zipBuffer: Buffer, tags: Tag[]) {
-    try {
-        // upload compressed repo using turbo
-        const turboTxId = await turboUpload(zipBuffer, tags);
-        console.log('Posted Tx to Turbo: ', turboTxId);
-        return turboTxId;
-    } catch (error) {
-        console.log('Error uploading using turbo, trying with Arweave...');
-        // let Arweave throw if it encounters errors
-        const arweaveTxId = await arweaveUpload(zipBuffer, tags);
-        console.log('Posted Tx to Arweave: ', arweaveTxId);
+    const isArSeedingStrategy = process.env.STRATEGY === 'ARSEEDING';
+    if (isArSeedingStrategy) {
+        const arweaveTxId = await arseedingUpload(zipBuffer, tags);
+        console.log('Posted Tx to Arseeding: ', arweaveTxId);
         return arweaveTxId;
+    } else {
+        try {
+            // upload compressed repo using turbo
+            const turboTxId = await turboUpload(zipBuffer, tags);
+            console.log('Posted Tx to Turbo: ', turboTxId);
+            return turboTxId;
+        } catch (error) {
+            console.log('Error uploading using turbo, trying with Arweave...');
+            // let Arweave throw if it encounters errors
+            const arweaveTxId = await arweaveUpload(zipBuffer, tags);
+            console.log('Posted Tx to Arweave: ', arweaveTxId);
+            return arweaveTxId;
+        }
     }
-}
-
-function initArweave() {
-    return Arweave.init({
-        host: 'arweave.net',
-        port: 443,
-        protocol: 'https',
-    });
 }
 
 async function arweaveUpload(zipBuffer: Buffer, tags: Tag[]) {

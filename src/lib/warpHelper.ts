@@ -101,7 +101,16 @@ async function newRepo(repoId: string, dataTxId: string) {
 
     // const contract = getWarp().contract(contractTxId).connect(jwk);
 
-    const payload = { id: repoId, name: title, description, dataTxId };
+    const uploadStrategy =
+        process.env.STRATEGY === 'ARSEEDING' ? 'ARSEEDING' : 'DEFAULT';
+
+    const payload = {
+        id: repoId,
+        name: title,
+        description,
+        dataTxId,
+        uploadStrategy,
+    };
 
     await waitFor(500);
 
@@ -122,7 +131,10 @@ async function updateRepo(id: string, dataTxId: string) {
 
     // const contract = getWarp().contract(contractTxId).connect(jwk);
 
-    const payload = { id, name: title, description, dataTxId };
+    const uploadStrategy =
+        process.env.STRATEGY === 'ARSEEDING' ? 'ARSEEDING' : 'DEFAULT';
+
+    const payload = { id, name: title, description, dataTxId, uploadStrategy };
 
     await waitFor(500);
 
