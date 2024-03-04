@@ -40,7 +40,7 @@
         "arseeding-js": "^0.0.30",
         "arweave": "^1.14.4",
         "dotenv": "^16.4.1",
-        "everpay": "^1.2.0",
+        "everpay": "^1.2.2",
         "jszip": "^3.10.1",
         "uuid": "^9.0.1",
         "warp-contracts": "^1.4.33"
