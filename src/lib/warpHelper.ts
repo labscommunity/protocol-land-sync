@@ -24,6 +24,10 @@ const contract = getWarp().contract(contractTxId).connect(jwk);
 export async function getRepos() {
     const address = await getAddress();
 
+    await contract
+        .syncState('https://pl-cache.saikranthi.dev/contract')
+        .catch(() => {});
+
     // let warp throw error if it can't retrieve the repositories
     const response = await contract.viewState({
         function: 'getRepositoriesByOwner',
