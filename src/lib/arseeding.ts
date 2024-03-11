@@ -6,10 +6,6 @@ import { Tag } from 'arweave/node/lib/transaction';
 import { getWallet, initArweave } from './common';
 import Everpay, { ChainType } from 'everpay';
 
-// Override original console log to disable everpay js from logging Arweave jwk
-const originalLog = console.log;
-console.log = () => {};
-
 const newEverpayByRSA = (arJWK: any, arAddress: string): Everpay => {
     const everpay = new Everpay({
         account: arAddress,
@@ -85,7 +81,5 @@ export async function arseedingUpload(zipBuffer: Buffer, tags: Tag[]) {
         throw new Error(
             `[ arseeding ] Posting repo with ArSeeding failed. ${error}`
         );
-    } finally {
-        console.log = originalLog;
     }
 }
