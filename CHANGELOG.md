@@ -1,5 +1,11 @@
 # @protocol.land/sync
 
+## 0.2.1
+
+### Patch Changes
+
+-   fc7d70e: feat: Add sync state
+
 ## 0.2.0
 
 ### Minor Changes
