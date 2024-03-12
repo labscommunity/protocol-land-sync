@@ -115,14 +115,14 @@ Follow `1.` and `2.` from the previous section to set up a GitHub Secret.
 
     # Use personal funds in case of transaction subsidization failure
     
-    HANDLE_SUBSIDY_ERROR: "true"
+    HANDLE_SUBSIDY_ERROR='true'
     ```
 
     Replace `'YOUR_WALLET_JWK_HERE'` with your Arweave wallet's JWK (JSON Web Key). 
     
     Currently Sync transaction costs are subsidized by Protocol Land and in case of subsidization failure, Sync program will exit unless `HANDLE_SUBSIDY_ERROR` env is set which lets you pay for the transaction from your wallet and continue.
     If the compressed size of your repository exceeds 100kb, ensure your wallet has enough $AR to cover the transaction fees.
-    
+
     These environment variables (`WALLET`, `REPO_TITLE`, and `REPO_DESCRIPTION`) are crucial for setting up your repository and providing a meaningful description.
 
     `STRATEGY` and `ARSEEDING_TOKEN_SYMBOL` are needed for using [ArSeeding](https://web3infra.dev/docs/arseeding/introduction/lightNode/) to sync repositories to Protocol Land. Supported Arweave tokens for ArSeeding strategy are: `['XYZ', 'ARDRIVE', 'PIA', 'VRT', 'U', 'STAMP', 'AR']`.
