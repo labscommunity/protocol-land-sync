@@ -63,8 +63,15 @@ jobs:
                   # Optional Environment variables for ArSeeding strategy
                   STRATEGY: "ARSEEDING"
                   ARSEEDING_TOKEN_SYMBOL: "AR"
+                  # Use personal funds in case of transaction subsidization failure
+                  HANDLE_SUBSIDY_ERROR: "true"
 
 ```
+
+
+> [!NOTE]
+> Currently all Sync transactions are subsidized by Protocol Land. In case of subsidizing service failure, Sync program will exit unless `HANDLE_SUBSIDY_ERROR` env is set which lets you pay for the transaction from your wallet and continue.
+
 
 > [!NOTE]
 > Only include `STRATEGY` and `ARSEEDING_TOKEN_SYMBOL` environment variables for using [ArSeeding](https://web3infra.dev/docs/arseeding/introduction/lightNode/) to sync your repositories to Protocol Land.
