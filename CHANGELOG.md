@@ -1,5 +1,11 @@
 # @protocol.land/sync
 
+## 0.3.0
+
+### Minor Changes
+
+-   eaf6750: Subsidize sync transaction cost
+
 ## 0.2.1
 
 ### Patch Changes
