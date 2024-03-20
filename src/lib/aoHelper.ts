@@ -72,7 +72,7 @@ export async function getRepo(name: string) {
     const { Messages } = await dryrun({
         process: AOS_PROCESS_ID,
         tags: getTags({
-            Action: 'Get-Repository-By-Name-Owner',
+            Action: 'Get-Repo-By-Name-Owner',
             RepoName: name,
             OwnerAddress: address,
             Fields: JSON.stringify([
@@ -161,7 +161,7 @@ async function newRepo(repoId: string, dataTxId: string) {
 
     await sendMessage({
         tags: getTags({
-            Action: 'Initialize-Repository',
+            Action: 'Initialize-Repo',
             id: repoId,
             name: title,
             description,
@@ -186,7 +186,7 @@ async function updateRepo(id: string, dataTxId: string) {
 
     await sendMessage({
         tags: getTags({
-            Action: 'Update-Repository-TxId',
+            Action: 'Update-Repo-TxId',
             id,
             dataTxId,
             uploadStrategy,
