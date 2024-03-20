@@ -3,7 +3,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { zipRepoJsZip } from './lib/zipHelper';
 import { uploadRepo } from './lib/arweaveHelper';
-import { getRepos, postRepo } from './lib/aoHelper';
+import { getRepo, postRepo } from './lib/aoHelper';
 import { exitWithError, getTags, getTitle } from './lib/common';
 import { encryptRepo } from './lib/privateRepo';
 
@@ -25,13 +25,8 @@ async function main() {
 
     console.log(`[ PL Sync ] Starting sync for repo '${title}'`);
 
-    // get existing repos for this wallet
-    const repos = await getRepos();
-
-    // check if repo already exists
-    let repoInfo = repos.find(
-        (r) => r.name.toLowerCase() === title.toLowerCase()
-    );
+    // get existing repo for this title & wallet
+    const repoInfo = await getRepo(title);
 
     const repoId = repoInfo?.id || uuidv4();
 

@@ -66,25 +66,32 @@ async function sendMessage({ tags, data }: SendMessageArgs) {
     return messageId;
 }
 
-export async function getRepos() {
+export async function getRepo(name: string) {
     const address = await getAddress();
 
     const { Messages } = await dryrun({
         process: AOS_PROCESS_ID,
         tags: getTags({
-            Action: 'Get-Repositories-By-Owner',
-            'Owner-Address': address,
+            Action: 'Get-Repository-By-Name-Owner',
+            RepoName: name,
+            OwnerAddress: address,
+            Fields: JSON.stringify([
+                'id',
+                'name',
+                'private',
+                'privateStateTxId',
+            ]),
         }),
     });
 
-    if (Messages.length === 0) return [];
+    if (Messages.length === 0) return undefined;
 
     return JSON.parse(Messages[0].Data)?.result as {
         id: string;
         name: string;
         private: boolean;
         privateStateTxId: string;
-    }[];
+    };
 }
 
 export async function postRepo(
