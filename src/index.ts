@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
+import { v4 as uuidv4 } from 'uuid';
 import { zipRepoJsZip } from './lib/zipHelper';
 import { uploadRepo } from './lib/arweaveHelper';
-import { getRepos, postRepoToWarp } from './lib/warpHelper';
+import { getRepo, postRepo } from './lib/aoHelper';
 import { exitWithError, getTags, getTitle } from './lib/common';
-import { v4 as uuidv4 } from 'uuid';
 import { encryptRepo } from './lib/privateRepo';
 
 // Set up constants
@@ -25,13 +25,8 @@ async function main() {
 
     console.log(`[ PL Sync ] Starting sync for repo '${title}'`);
 
-    // get existing repos for this wallet
-    const repos = await getRepos();
-
-    // check if repo already exists
-    let repoInfo = repos.find(
-        (r) => r.name.toLowerCase() === title.toLowerCase()
-    );
+    // get existing repo for this title & wallet
+    const repoInfo = await getRepo(title);
 
     const repoId = repoInfo?.id || uuidv4();
 
@@ -56,7 +51,7 @@ async function main() {
 
         const dataTxId = await uploadRepo(zipBuffer, tags);
 
-        if (dataTxId) await postRepoToWarp(dataTxId, repoId, repoInfo);
+        if (dataTxId) await postRepo(dataTxId, repoId, repoInfo);
     } catch (error) {
         exitWithError(error as string);
     }

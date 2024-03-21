@@ -7,6 +7,7 @@ import { config } from 'dotenv';
 config();
 
 const DESCRIPTION_PLACEHOLDER = 'Decentralized repo description';
+export const AOS_PROCESS_ID = 'Mj6eddWvVjxROVUvUoz-ysr0lrcb36b9hNgF5NKLoLw';
 
 const isJwk = (obj: any): boolean => {
     if (typeof obj !== 'object') return false;
@@ -25,9 +26,6 @@ export const getWallet = () => {
     }
     throw new Error('Arweave wallet key not found or invalid');
 };
-
-export const getWarpContractTxId = () =>
-    'w5ZU15Y2cLzZlu3jewauIlnzbKw-OAxbN9G5TbuuiDQ';
 
 export const getTitle = () => process.env.REPO_TITLE as string;
 
