@@ -1,5 +1,11 @@
 # @protocol.land/sync
 
+## 0.3.1
+
+### Patch Changes
+
+-   127996d: Use form data to upload data with subsidizing service
+
 ## 0.3.0
 
 ### Minor Changes
