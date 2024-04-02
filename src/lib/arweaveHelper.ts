@@ -65,16 +65,22 @@ async function arweaveUpload(zipBuffer: Buffer, tags: Tag[]) {
     for (const tag of tags) tx.addTag(tag.name, tag.value);
 
     await arweave.transactions.sign(tx, jwk);
-    const response = await arweave.transactions.post(tx);
 
-    console.log(`${response.status} - ${response.statusText}`);
+    let uploader = await arweave.transactions.getUploader(tx);
 
-    if (response.status !== 200) {
+    while (!uploader.isComplete) {
+        await uploader.uploadChunk();
+        console.log(
+            `${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`
+        );
+    }
+
+    if (!uploader.isComplete) {
         // throw error if arweave tx wasn't posted
         throw `[ arweave ] Posting repo to arweave failed.\n\tError: '${
-            response.status
+            uploader.lastResponseStatus
         }' - '${
-            response.statusText
+            uploader.lastResponseError
         }'\n\tCheck if you have plenty $AR to upload ~${Math.ceil(
             dataSize / 1024
         )} KB of data.`;
@@ -114,7 +120,7 @@ export async function turboUpload(zipBuffer: Buffer, tags: Tag[]) {
 export async function subsidizedUpload(zipBuffer: Buffer, tags: Tag[]) {
     if (!jwk) throw '[ turbo ] No jwk wallet supplied';
 
-    const node = 'https://subsidize.saikranthi.dev/api/v1/postrepo';
+    const node = 'https://subsidize.saikranthi.dev/api/v1/postrepobuffer';
     const uint8ArrayZip = new Uint8Array(zipBuffer);
     const signer = new ArweaveSigner(jwk);
     const address = await getAddress();
@@ -123,18 +129,19 @@ export async function subsidizedUpload(zipBuffer: Buffer, tags: Tag[]) {
     await dataItem.sign(signer);
 
     const bundle = await bundleAndSignData([dataItem], signer);
+    const bundleBuffer = bundle.getRaw();
+
+    const formData = new FormData();
+    formData.append('txBundle', new Blob([bundleBuffer]));
+    formData.append('platform', 'CLI');
+    formData.append('owner', address);
 
     const res = await fetch(`${node}`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             Accept: 'application/json',
         },
-        body: JSON.stringify({
-            txBundle: bundle.getRaw(),
-            platform: 'CLI',
-            owner: address,
-        }),
+        body: formData,
     });
     const upload = (await res.json()) as SubsidizedUploadJsonResponse;
 
