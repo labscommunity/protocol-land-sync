@@ -73,8 +73,8 @@ export async function getRepo(name: string) {
         process: AOS_PROCESS_ID,
         tags: getTags({
             Action: 'Get-Repo-By-Name-Owner',
-            RepoName: name,
-            OwnerAddress: address,
+            "Repo-Name": name,
+            "Owner-Address": address,
             Fields: JSON.stringify([
                 'id',
                 'name',
@@ -162,11 +162,11 @@ async function newRepo(repoId: string, dataTxId: string) {
     await sendMessage({
         tags: getTags({
             Action: 'Initialize-Repo',
-            id: repoId,
-            name: title,
-            description,
-            dataTxId,
-            uploadStrategy,
+            Id: repoId,
+            Name: title,
+            Description: description,
+            "Data-TxId": dataTxId,
+            "Upload-Strategy": uploadStrategy,
         }),
     });
 
@@ -187,9 +187,9 @@ async function updateRepo(id: string, dataTxId: string) {
     await sendMessage({
         tags: getTags({
             Action: 'Update-Repo-TxId',
-            id,
-            dataTxId,
-            uploadStrategy,
+            Id: id,
+            "Data-TxId": dataTxId,
+            "Upload-Strategy": uploadStrategy,
         }),
     });
 
