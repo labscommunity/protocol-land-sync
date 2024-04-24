@@ -35,7 +35,7 @@
     "homepage": "https://github.com/labscommunity/protocol-land-sync#readme",
     "dependencies": {
         "@amplitude/analytics-node": "^1.3.4",
-        "@permaweb/aoconnect": "^0.0.48",
+        "@permaweb/aoconnect": "^0.0.52",
         "arbundles": "^0.9.11",
         "arseeding-js": "^0.0.30",
         "arweave": "^1.14.4",

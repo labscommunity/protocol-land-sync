@@ -25,7 +25,7 @@ async function encryptDataWithExistingKey(
 ) {
     let key = aesKey;
 
-    if (!(aesKey instanceof crypto.webcrypto.CryptoKey)) {
+    if (!(aesKey instanceof CryptoKey)) {
         key = await crypto.subtle.importKey(
             'raw',
             aesKey,
