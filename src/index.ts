@@ -5,7 +5,6 @@ import { zipRepoJsZip } from './lib/zipHelper';
 import { uploadRepo } from './lib/arweaveHelper';
 import { getRepo, postRepo } from './lib/aoHelper';
 import { exitWithError, getTags, getTitle } from './lib/common';
-import { encryptRepo } from './lib/privateRepo';
 
 // Set up constants
 const PATH = '.';
@@ -46,7 +45,7 @@ async function main() {
         const privateStateTxId = repoInfo?.privateStateTxId;
 
         if (isPrivate && privateStateTxId) {
-            zipBuffer = await encryptRepo(zipBuffer, privateStateTxId);
+            throw new Error('Private repos are not supported.');
         }
 
         const dataTxId = await uploadRepo(zipBuffer, tags);
