@@ -1,5 +1,11 @@
 # @protocol.land/sync
 
+## 0.4.0
+
+### Minor Changes
+
+-   8c49bb7: Removed private repo support
+
 ## 0.3.1
 
 ### Patch Changes

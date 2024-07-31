@@ -1,6 +1,6 @@
 {
     "name": "@protocol.land/sync",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "description": "Sync git repos to Protocol Land",
     "main": "dist/index.js",
     "module": "dist/index.mjs",
