@@ -1,7 +1,6 @@
 import { getWallet, initArweave } from './common';
 import { Tag } from 'arweave/node/lib/transaction';
-import { ArweaveSigner, bundleAndSignData, createData } from 'arbundles';
-import { arseedingUpload } from './arseeding';
+import { ArweaveSigner, createData } from 'arbundles';
 
 const jwk = getWallet();
 
