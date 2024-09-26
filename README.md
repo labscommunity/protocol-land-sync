@@ -6,7 +6,7 @@ The Protocol Land Sync package simplifies the process of syncing Git repositorie
 
 To sync a repository with Protocol Land, you can either run it manually from your local Git repository's root folder or set up a GitHub Action if your repository is hosted on GitHub.
 
-For both methods, **you need an Arweave wallet with some $AR** to pay for the upload, unless your repository uses less than 100KB of data.
+For both methods, **you need an Arweave wallet with some $AR** to pay for the upload.
 
 ### GitHub Actions
 
@@ -60,23 +60,8 @@ jobs:
                   REPO_TITLE: ${{ github.event.repository.name }}
                   REPO_DESCRIPTION: ${{ github.event.repository.description }}
                   WALLET: ${{ secrets.WALLET }}
-                  # Optional Environment variables for ArSeeding strategy
-                  STRATEGY: "ARSEEDING"
-                  ARSEEDING_TOKEN_SYMBOL: "AR"
-                  # Use personal funds in case of transaction subsidization failure
-                  HANDLE_SUBSIDY_ERROR: "true"
 
 ```
-
-
-> [!NOTE]
-> Currently all Sync transactions are subsidized by Protocol Land. In case of subsidizing service failure, Sync program will exit unless `HANDLE_SUBSIDY_ERROR` env is set which lets you pay for the transaction from your wallet and continue.
-
-
-> [!NOTE]
-> Only include `STRATEGY` and `ARSEEDING_TOKEN_SYMBOL` environment variables for using [ArSeeding](https://web3infra.dev/docs/arseeding/introduction/lightNode/) to sync your repositories to Protocol Land.
-> Supported Arweave tokens for ArSeeding strategy are: `['XYZ', 'ARDRIVE', 'PIA', 'VRT', 'U', 'STAMP', 'AR']`.
-> You need [EverPay](https://app.everpay.io/) balances for these tokens to use ArSeeding strategy.
 
 > [!NOTE]
 > This GitHub Action **will run on every push to the 'main' branch**.
@@ -107,25 +92,12 @@ Follow `1.` and `2.` from the previous section to set up a GitHub Secret.
     WALLET='YOUR_WALLET_JWK_HERE'
     REPO_TITLE='Your Repo Name Here'
     REPO_DESCRIPTION='Your Repo Description Here'
-
-    # Optional Environment variables for ArSeeding strategy
-
-    STRATEGY='ARSEEDING'
-    ARSEEDING_TOKEN_SYMBOL='AR'
-
-    # Use personal funds in case of transaction subsidization failure
-    
-    HANDLE_SUBSIDY_ERROR='true'
     ```
 
     Replace `'YOUR_WALLET_JWK_HERE'` with your Arweave wallet's JWK (JSON Web Key). 
-    
-    Currently Sync transaction costs are subsidized by Protocol Land and in case of subsidization failure, Sync program will exit unless `HANDLE_SUBSIDY_ERROR` env is set which lets you pay for the transaction from your wallet and continue.
-    If the compressed size of your repository exceeds 100kb, ensure your wallet has enough $AR to cover the transaction fees.
 
     These environment variables (`WALLET`, `REPO_TITLE`, and `REPO_DESCRIPTION`) are crucial for setting up your repository and providing a meaningful description.
 
-    `STRATEGY` and `ARSEEDING_TOKEN_SYMBOL` are needed for using [ArSeeding](https://web3infra.dev/docs/arseeding/introduction/lightNode/) to sync repositories to Protocol Land. Supported Arweave tokens for ArSeeding strategy are: `['XYZ', 'ARDRIVE', 'PIA', 'VRT', 'U', 'STAMP', 'AR']`.
 
 4. **(optional)** Checkout locally all the branches you want synced. The tool uploads all the branches you have checked out locally with Git.
    Run this bash command to checkout all the remote branches:
