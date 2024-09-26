@@ -27,7 +27,7 @@ export const getWallet = () => {
     throw new Error('Arweave wallet key not found or invalid');
 };
 
-export const getTitle = () => process.env as unknown as string;
+export const getTitle = () => process.env.REPO_TITLE as string;
 
 export const getDescription = () =>
     process.env.REPO_DESCRIPTION || DESCRIPTION_PLACEHOLDER;
