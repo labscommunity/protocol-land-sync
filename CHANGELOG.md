@@ -1,5 +1,11 @@
 # @protocol.land/sync
 
+## 0.5.0
+
+### Minor Changes
+
+-   6f9abd1: remove repo subsidization
+
 ## 0.4.0
 
 ### Minor Changes
