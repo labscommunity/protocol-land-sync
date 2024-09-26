@@ -1,7 +1,6 @@
 import { getWallet, initArweave } from './common';
 import { Tag } from 'arweave/node/lib/transaction';
-import { ArweaveSigner, bundleAndSignData, createData } from 'arbundles';
-import { arseedingUpload } from './arseeding';
+import { ArweaveSigner, createData } from 'arbundles';
 
 const jwk = getWallet();
 
@@ -15,44 +14,9 @@ export function getActivePublicKey() {
 }
 
 export async function uploadRepo(zipBuffer: Buffer, tags: Tag[]) {
-    //Subsidized Upload
-    try {
-        const uploadedTx = await subsidizedUpload(zipBuffer, tags);
-        const serviceUsed = uploadedTx.bundled ? 'Turbo' : 'Arweave';
-
-        console.log(
-            `[ PL SUBSIDIZE ] Posted Tx to ${serviceUsed}: ${uploadedTx.data.repoTxId}`
-        );
-
-        return uploadedTx.data.repoTxId;
-    } catch (error) {
-        const userWantsToPay = process.env.HANDLE_SUBSIDY_ERROR === 'true';
-
-        if (!userWantsToPay) {
-            throw '[ PL SUBSIDIZE ] Failed to subsidize this transaction.';
-        }
-        //continue
-    }
-
-    const isArSeedingStrategy = process.env.STRATEGY === 'ARSEEDING';
-    if (isArSeedingStrategy) {
-        const arweaveTxId = await arseedingUpload(zipBuffer, tags);
-        console.log('Posted Tx to Arseeding: ', arweaveTxId);
-        return arweaveTxId;
-    } else {
-        try {
-            // upload compressed repo using turbo
-            const turboTxId = await turboUpload(zipBuffer, tags);
-            console.log('Posted Tx to Turbo: ', turboTxId);
-            return turboTxId;
-        } catch (error) {
-            console.log('Error uploading using turbo, trying with Arweave...');
-            // let Arweave throw if it encounters errors
-            const arweaveTxId = await arweaveUpload(zipBuffer, tags);
-            console.log('Posted Tx to Arweave: ', arweaveTxId);
-            return arweaveTxId;
-        }
-    }
+    const arweaveTxId = await arweaveUpload(zipBuffer, tags);
+    console.log('Posted Tx to Arweave: ', arweaveTxId);
+    return arweaveTxId;
 }
 
 async function arweaveUpload(zipBuffer: Buffer, tags: Tag[]) {
@@ -116,46 +80,3 @@ export async function turboUpload(zipBuffer: Buffer, tags: Tag[]) {
 
     return dataItem.id;
 }
-
-export async function subsidizedUpload(zipBuffer: Buffer, tags: Tag[]) {
-    if (!jwk) throw '[ turbo ] No jwk wallet supplied';
-
-    const node = 'https://subsidize.saikranthi.dev/api/v1/postrepobuffer';
-    const uint8ArrayZip = new Uint8Array(zipBuffer);
-    const signer = new ArweaveSigner(jwk);
-    const address = await getAddress();
-
-    const dataItem = createData(uint8ArrayZip, signer, { tags });
-    await dataItem.sign(signer);
-
-    const bundle = await bundleAndSignData([dataItem], signer);
-    const bundleBuffer = bundle.getRaw();
-
-    const formData = new FormData();
-    formData.append('txBundle', new Blob([bundleBuffer]));
-    formData.append('platform', 'CLI');
-    formData.append('owner', address);
-
-    const res = await fetch(`${node}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-        },
-        body: formData,
-    });
-    const upload = (await res.json()) as SubsidizedUploadJsonResponse;
-
-    if (!upload || !upload.success)
-        throw new Error(
-            `[ turbo ] Posting repo with turbo failed. Error: ${res.status} - ${res.statusText}`
-        );
-
-    return upload;
-}
-
-export type SubsidizedUploadJsonResponse = {
-    success: boolean;
-    bundled: boolean;
-    data: { repoTxId: string };
-    error?: string;
-};
