@@ -1,5 +1,11 @@
 # @protocol.land/sync
 
+## 0.6.0
+
+### Minor Changes
+
+-   7979b67: attach empty process to new repo for token
+
 ## 0.5.0
 
 ### Minor Changes
