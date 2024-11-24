@@ -10,9 +10,10 @@ import {
     dryrun,
     message,
     result,
+    spawn,
 } from '@permaweb/aoconnect';
 import type { Tag } from 'arweave/node/lib/transaction';
-import { getAddress } from './arweaveHelper';
+import { getAddress, pollForTxBeingAvailable } from './arweaveHelper';
 import { trackAmplitudeAnalyticsEvent } from './analytics';
 
 const title = getTitle();
@@ -73,8 +74,8 @@ export async function getRepo(name: string) {
         process: AOS_PROCESS_ID,
         tags: getTags({
             Action: 'Get-Repo-By-Name-Owner',
-            "Repo-Name": name,
-            "Owner-Address": address,
+            'Repo-Name': name,
+            'Owner-Address': address,
             Fields: JSON.stringify([
                 'id',
                 'name',
@@ -129,7 +130,10 @@ export async function postRepo(
         }
     } else {
         try {
-            const result = await newRepo(repoId, dataTxId);
+            const tokenProcessId = await spawnTokenProcess(title);
+
+            if (!tokenProcessId) throw '[ AO ] Failed to spawn token process';
+            const result = await newRepo(repoId, dataTxId, tokenProcessId);
             await trackAmplitudeAnalyticsEvent(
                 'Repository',
                 'Successfully created a repo',
@@ -151,8 +155,13 @@ export async function postRepo(
     }
 }
 
-async function newRepo(repoId: string, dataTxId: string) {
-    if (!title || !dataTxId) throw '[ AO ] No title or dataTx for new repo';
+async function newRepo(
+    repoId: string,
+    dataTxId: string,
+    tokenProcessId: string
+) {
+    if (!title || !dataTxId || !tokenProcessId)
+        throw '[ AO ] No title or dataTx or tokenProcessId for new repo';
 
     const uploadStrategy =
         process.env.STRATEGY === 'ARSEEDING' ? 'ARSEEDING' : 'DEFAULT';
@@ -165,8 +174,9 @@ async function newRepo(repoId: string, dataTxId: string) {
             Id: repoId,
             Name: title,
             Description: description,
-            "Data-TxId": dataTxId,
-            "Upload-Strategy": uploadStrategy,
+            'Data-TxId': dataTxId,
+            'Upload-Strategy': uploadStrategy,
+            'Token-Process-Id': tokenProcessId,
         }),
     });
 
@@ -188,12 +198,67 @@ async function updateRepo(id: string, dataTxId: string) {
         tags: getTags({
             Action: 'Update-Repo-TxId',
             Id: id,
-            "Data-TxId": dataTxId,
-            "Upload-Strategy": uploadStrategy,
+            'Data-TxId': dataTxId,
+            'Upload-Strategy': uploadStrategy,
         }),
     });
 
     console.log(`[ AO ] Repo '${title}' with id '${id}' updated`);
 
     return { id };
+}
+
+async function spawnTokenProcess(repoName: string) {
+    const aosDetails = await getAosDetails();
+    const tags = [
+        { name: 'App-Name', value: 'aos' },
+        {
+            name: 'Name',
+            value: repoName + ' Repo Token' || 'Protocol.Land Repo Token',
+        },
+        { name: 'Process-Type', value: 'token' },
+        { name: 'aos-Version', value: aosDetails.version },
+        {
+            name: 'Authority',
+            value: 'fcoN_xJeisVsPXA-trzVAuIiqO3ydLQxM-L4XbrQKzY',
+        },
+    ] as Tag[];
+
+    const pid = await spawn({
+        module: aosDetails.module,
+        tags,
+        scheduler: aosDetails.scheduler,
+        data: '1984',
+        signer: createDataItemSigner(getWallet()),
+    });
+
+    await pollForTxBeingAvailable({ txId: pid });
+
+    return pid;
+}
+
+async function getAosDetails() {
+    const defaultDetails = {
+        version: '1.10.22',
+        module: 'SBNb1qPQ1TDwpD_mboxm2YllmMLXpWw4U8P9Ff8W9vk',
+        scheduler: '_GQ33BkPtZrqxA84vM8Zk-N2aO0toNNu_C-l-rawrBA',
+    };
+
+    try {
+        const response = await fetch(
+            'https://raw.githubusercontent.com/permaweb/aos/main/package.json'
+        );
+        const pkg = (await response.json()) as {
+            version: string;
+            aos: { module: string };
+        };
+        const details = {
+            version: pkg?.version || defaultDetails.version,
+            module: pkg?.aos?.module || defaultDetails.module,
+            scheduler: defaultDetails.scheduler,
+        };
+        return details;
+    } catch {
+        return defaultDetails;
+    }
 }
