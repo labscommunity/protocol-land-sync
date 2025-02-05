@@ -7,7 +7,8 @@ import { config } from 'dotenv';
 config();
 
 const DESCRIPTION_PLACEHOLDER = 'Decentralized repo description';
-export const AOS_PROCESS_ID = 'yJZ3_Yrc-qYRt1zHmY7YeNvpmQwuqyK3dT0-gxWftew';
+// export const AOS_PROCESS_ID = 'yJZ3_Yrc-qYRt1zHmY7YeNvpmQwuqyK3dT0-gxWftew';
+export const AOS_PROCESS_ID = 'fvOElkbX-XbIUzvMRBqEb2uCzrjoeGw5SiPKJLzL6Jk';
 
 const isJwk = (obj: any): boolean => {
     if (typeof obj !== 'object') return false;
@@ -31,6 +32,12 @@ export const getTitle = () => process.env.REPO_TITLE as string;
 
 export const getDescription = () =>
     process.env.REPO_DESCRIPTION || DESCRIPTION_PLACEHOLDER;
+
+export const getOrganizationId = () => process.env.ORGANIZATION_ID as string;
+
+export const getImportTokenProcessId = () => process.env.IMPORT_TOKEN_PROCESS_ID as string;
+
+export const getTokenize = () => process.env.TOKENIZE as string;
 
 export const initArweave = () =>
     new Arweave({

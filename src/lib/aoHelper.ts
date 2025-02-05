@@ -1,7 +1,10 @@
 import {
     AOS_PROCESS_ID,
     getDescription,
+    getImportTokenProcessId,
+    getOrganizationId,
     getTitle,
+    getTokenize,
     getWallet,
     waitFor,
 } from './common';
@@ -130,10 +133,21 @@ export async function postRepo(
         }
     } else {
         try {
-            const tokenProcessId = await spawnTokenProcess(title);
+            let tokenProcessId = getImportTokenProcessId();
+            let isTokenImport = true;
+
+            if (!tokenProcessId) {
+                tokenProcessId = await spawnTokenProcess(title);
+                isTokenImport = false;
+            }
 
             if (!tokenProcessId) throw '[ AO ] Failed to spawn token process';
-            const result = await newRepo(repoId, dataTxId, tokenProcessId);
+            const result = await newRepo(
+                repoId,
+                dataTxId,
+                tokenProcessId,
+                isTokenImport
+            );
             await trackAmplitudeAnalyticsEvent(
                 'Repository',
                 'Successfully created a repo',
@@ -158,26 +172,44 @@ export async function postRepo(
 async function newRepo(
     repoId: string,
     dataTxId: string,
-    tokenProcessId: string
+    tokenProcessId: string,
+    isTokenImport: boolean
 ) {
     if (!title || !dataTxId || !tokenProcessId)
         throw '[ AO ] No title or dataTx or tokenProcessId for new repo';
 
     const uploadStrategy =
         process.env.STRATEGY === 'ARSEEDING' ? 'ARSEEDING' : 'DEFAULT';
+    const organizationId = getOrganizationId();
+    const tokenize = getTokenize();
 
     await waitFor(500);
 
+    const tags: Record<string, string> = {
+        Action: 'Initialize-Repo',
+        Id: repoId,
+        Name: title,
+        Description: description,
+        'Data-TxId': dataTxId,
+        'Upload-Strategy': uploadStrategy,
+        'Token-Process-Id': tokenProcessId,
+    };
+
+    if (isTokenImport) {
+        tags['Token-Type'] = 'IMPORT';
+    }
+
+    if (organizationId) {
+        tags['OrgId'] = organizationId;
+        tags['Creator'] = 'ORGANIZATION';
+    }
+
+    if (tokenize === 'true') {
+        tags['Tokenize'] = 'true';
+    }
+
     await sendMessage({
-        tags: getTags({
-            Action: 'Initialize-Repo',
-            Id: repoId,
-            Name: title,
-            Description: description,
-            'Data-TxId': dataTxId,
-            'Upload-Strategy': uploadStrategy,
-            'Token-Process-Id': tokenProcessId,
-        }),
+        tags: getTags(tags),
     });
 
     console.log(`[ AO ] Repo '${title}' initialized with id '${repoId}'`);
