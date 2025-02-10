@@ -70,22 +70,23 @@ async function sendMessage({ tags, data }: SendMessageArgs) {
     return messageId;
 }
 
-export async function getRepo(name: string) {
+export async function getRepo(name: string, orgId?: string) {
     const address = await getAddress();
+
+    const tags: Record<string, string> = {
+        Action: 'Get-Repo-By-Name-Owner',
+        'Repo-Name': name,
+        'Owner-Address': address,
+        Fields: JSON.stringify(['id', 'name', 'private', 'privateStateTxId']),
+    };
+
+    if (orgId) {
+        tags['OrgID'] = orgId;
+    }
 
     const { Messages } = await dryrun({
         process: AOS_PROCESS_ID,
-        tags: getTags({
-            Action: 'Get-Repo-By-Name-Owner',
-            'Repo-Name': name,
-            'Owner-Address': address,
-            Fields: JSON.stringify([
-                'id',
-                'name',
-                'private',
-                'privateStateTxId',
-            ]),
-        }),
+        tags: getTags(tags),
     });
 
     if (Messages.length === 0) return undefined;
