@@ -60,6 +60,7 @@ jobs:
                   REPO_TITLE: ${{ github.event.repository.name }}
                   REPO_DESCRIPTION: ${{ github.event.repository.description }}
                   WALLET: ${{ secrets.WALLET }}
+                # ORGANIZATION_ID: 37f219ba-df6b-40f6-89c9-a28c699967fd ## if you want to sync to an organization
 
 ```
 
@@ -92,6 +93,7 @@ Follow `1.` and `2.` from the previous section to set up a GitHub Secret.
     WALLET='YOUR_WALLET_JWK_HERE'
     REPO_TITLE='Your Repo Name Here'
     REPO_DESCRIPTION='Your Repo Description Here'
+    ORGANIZATION_ID='Your Organization ID Here'
     ```
 
     Replace `'YOUR_WALLET_JWK_HERE'` with your Arweave wallet's JWK (JSON Web Key). 
