@@ -1,5 +1,11 @@
 # @protocol.land/sync
 
+## 0.7.0
+
+### Minor Changes
+
+-   59e1003: support pl organizations
+
 ## 0.6.0
 
 ### Minor Changes
