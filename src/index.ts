@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { zipRepoJsZip } from './lib/zipHelper';
 import { uploadRepo } from './lib/arweaveHelper';
 import { getRepo, postRepo } from './lib/aoHelper';
-import { exitWithError, getTags, getTitle } from './lib/common';
+import { exitWithError, getOrganizationId, getTags, getTitle } from './lib/common';
 
 // Set up constants
 const PATH = '.';
@@ -14,6 +14,7 @@ const FOLDER_TO_ZIP = '.'; // Compress the full repo
 // Set up a regex for repo names compliance
 const NAME_REGEX = /^[a-zA-Z0-9._-]+$/;
 const title = getTitle();
+const orgId = getOrganizationId();
 
 async function main() {
     // check name complies with name rules
@@ -25,7 +26,7 @@ async function main() {
     console.log(`[ PL Sync ] Starting sync for repo '${title}'`);
 
     // get existing repo for this title & wallet
-    const repoInfo = await getRepo(title);
+    const repoInfo = await getRepo(title, orgId);
 
     const repoId = repoInfo?.id || uuidv4();
 
