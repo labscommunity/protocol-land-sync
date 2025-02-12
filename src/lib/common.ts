@@ -7,8 +7,7 @@ import { config } from 'dotenv';
 config();
 
 const DESCRIPTION_PLACEHOLDER = 'Decentralized repo description';
-// export const AOS_PROCESS_ID = 'yJZ3_Yrc-qYRt1zHmY7YeNvpmQwuqyK3dT0-gxWftew';
-export const AOS_PROCESS_ID = 'fvOElkbX-XbIUzvMRBqEb2uCzrjoeGw5SiPKJLzL6Jk';
+export const AOS_PROCESS_ID = 'yJZ3_Yrc-qYRt1zHmY7YeNvpmQwuqyK3dT0-gxWftew';
 
 const isJwk = (obj: any): boolean => {
     if (typeof obj !== 'object') return false;
