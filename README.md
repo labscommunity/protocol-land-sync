@@ -61,6 +61,7 @@ jobs:
                   REPO_DESCRIPTION: ${{ github.event.repository.description }}
                   WALLET: ${{ secrets.WALLET }}
                 # ORGANIZATION_ID: 37f219ba-df6b-40f6-89c9-a28c699967fd ## if you want to sync to an organization
+                # ORGANIZATION_NAME: protocol-land ## if you want to sync to an organization
 
 ```
 
