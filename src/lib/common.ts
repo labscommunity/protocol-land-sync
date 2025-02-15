@@ -32,9 +32,11 @@ export const getTitle = () => process.env.REPO_TITLE as string;
 export const getDescription = () =>
     process.env.REPO_DESCRIPTION || DESCRIPTION_PLACEHOLDER;
 
-export const getOrganizationId = () => process.env.ORGANIZATION_ID as string;
+export const getOrganizationName = () =>
+    process.env.ORGANIZATION_NAME as string;
 
-export const getImportTokenProcessId = () => process.env.IMPORT_TOKEN_PROCESS_ID as string;
+export const getImportTokenProcessId = () =>
+    process.env.IMPORT_TOKEN_PROCESS_ID as string;
 
 export const getTokenize = () => process.env.TOKENIZE as string;
 

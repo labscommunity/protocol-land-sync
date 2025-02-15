@@ -2,7 +2,7 @@ import {
     AOS_PROCESS_ID,
     getDescription,
     getImportTokenProcessId,
-    getOrganizationId,
+    getOrganizationName,
     getTitle,
     getTokenize,
     getWallet,
@@ -181,7 +181,7 @@ async function newRepo(
 
     const uploadStrategy =
         process.env.STRATEGY === 'ARSEEDING' ? 'ARSEEDING' : 'DEFAULT';
-    const organizationId = getOrganizationId();
+    const organizationId = await getOrganizationId();
     const tokenize = getTokenize();
 
     await waitFor(500);
@@ -294,4 +294,35 @@ async function getAosDetails() {
     } catch {
         return defaultDetails;
     }
+}
+
+export async function resolveOrganizationId(orgName: string) {
+    if (!orgName) throw '[ AO ] No organization name';
+    const tags = getTags({
+        Action: 'Get-Organization-By-Id',
+        Id: orgName,
+    });
+
+    const msgId = await sendMessage({ tags });
+    const { Messages } = await result({
+        message: msgId,
+        process: AOS_PROCESS_ID,
+    });
+
+    if (Messages.length === 0) throw '[ AO ] No organization found';
+    const org = JSON.parse(Messages[0].Data);
+    if (!org.result) throw '[ AO ] No organization id found';
+
+    return org.result.id;
+}
+
+export async function getOrganizationId() {
+    const orgName = getOrganizationName();
+    let orgId: string = process.env.ORGANIZATION_ID as string;
+
+    if (orgName && orgName.length > 0) {
+        orgId = await resolveOrganizationId(orgName);
+    }
+
+    return orgId;
 }
