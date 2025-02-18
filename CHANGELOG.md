@@ -1,5 +1,11 @@
 # @protocol.land/sync
 
+## 0.8.0
+
+### Minor Changes
+
+-   854f5e0: support org name
+
 ## 0.7.0
 
 ### Minor Changes
